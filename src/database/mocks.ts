@@ -1,9 +1,13 @@
-import { Feature, Place, PlaceFeature, User } from './models'
+import { SequelizeStorage, Umzug } from 'umzug'
+import { connection } from './connection'
 
-export const initDatabase = async () => {
-  await User.sync()
-  await Feature.sync()
-  await Place.sync()
-  await Place.sync()
-  await PlaceFeature.sync()
+export const runMigrations = async () => {
+  const umzug = new Umzug({
+    migrations: { glob: 'src/database/migrations/*.ts' },
+    context: connection.getQueryInterface(),
+    storage: new SequelizeStorage({ sequelize: connection }),
+    logger: console,
+  })
+
+  await umzug.up({})
 }

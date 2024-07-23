@@ -22,7 +22,7 @@ PlaceFeature.init(
   {
     placeID: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
     featureID: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
-    available: { type: DataTypes.BOOLEAN },
+    available: { type: DataTypes.BOOLEAN, allowNull: false },
   },
   {
     timestamps: false,

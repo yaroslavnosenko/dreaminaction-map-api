@@ -5,7 +5,7 @@ import express, { Express } from 'express'
 
 import { router } from './api/routes'
 import { appConfigs } from './configs'
-import { connection, initDatabase } from './database'
+import { connection, runMigrations } from './database'
 import { auth } from './middlewares'
 
 dotenv.config()
@@ -18,9 +18,10 @@ app.use(router)
 const bootstrap = async (): Promise<void> => {
   try {
     await connection.authenticate()
-    await initDatabase()
+    await runMigrations()
     app.listen(appConfigs.port, () => console.log('Server started!'))
   } catch (error) {
+    console.log(error)
     process.exit(1)
   }
 }

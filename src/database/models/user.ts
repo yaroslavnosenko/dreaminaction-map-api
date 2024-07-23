@@ -32,7 +32,7 @@ export class User
 User.init(
   {
     id: { type: DataTypes.UUID, primaryKey: true },
-    email: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
     role: { type: DataTypes.STRING, allowNull: false },
     firstName: { type: DataTypes.STRING },
     lastName: { type: DataTypes.STRING },
