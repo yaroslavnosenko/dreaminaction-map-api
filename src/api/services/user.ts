@@ -14,6 +14,10 @@ export class UserService {
     return User.findOne({ where: { id } })
   }
 
+  public static async getOneByEmail(email: string): Promise<User | null> {
+    return User.findOne({ where: { email } })
+  }
+
   public static async getAll(query: string = ''): Promise<User[]> {
     return User.findAll()
   }
