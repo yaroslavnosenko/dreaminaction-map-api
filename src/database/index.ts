@@ -1,2 +1,2 @@
 export * from './connection'
-export * from './mocks'
+export * from './migrations'
