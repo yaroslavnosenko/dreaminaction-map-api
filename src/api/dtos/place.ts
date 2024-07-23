@@ -27,6 +27,7 @@ export class PlaceDTO {
   lng: number
 
   @IsString()
+  @MaxLength(180)
   @IsOptional()
   description?: string
 }

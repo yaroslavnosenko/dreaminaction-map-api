@@ -16,9 +16,8 @@ export class AuthService {
 
   public static validateToken(token: string): { uid: string } | null {
     try {
-      const result = jwt.verify(token, appConfigs.jwtSecret)
-      console.log(result)
-      return { uid: 'id' }
+      const { uid } = jwt.verify(token, appConfigs.jwtSecret) as { uid: string }
+      return { uid }
     } catch {
       return null
     }
