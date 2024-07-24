@@ -55,8 +55,12 @@ export class PlaceService {
   }
 
   public static async setOwner(id: string, userID: string): Promise<boolean> {
-    const [count] = await Place.update({ userID }, { where: { id } })
-    return count === 1
+    try {
+      const [count] = await Place.update({ userID }, { where: { id } })
+      return count === 1
+    } catch {
+      return false
+    }
   }
 
   public static async setAccessibility(

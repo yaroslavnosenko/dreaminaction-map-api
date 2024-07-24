@@ -1,14 +1,14 @@
 import { Accessibility, Category, UserRole } from '../../consts'
 
-export interface IdResponse {
+export class IdResponse {
   id: string
 }
 
-export interface TokenResponse {
+export class TokenResponse {
   token: string
 }
 
-export interface UserRepsonse {
+export class UserRepsonse {
   id: string
   email: string
   role: UserRole
@@ -16,12 +16,12 @@ export interface UserRepsonse {
   lastName?: string
 }
 
-export interface FeatureResponse {
+export class FeatureResponse {
   id: string
   name: string
 }
 
-export interface PlaceResponse {
+export class PlaceResponse {
   id: string
   name: string
   category: Category
