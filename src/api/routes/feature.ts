@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express'
-import { UserRole } from '../../database/models'
-import { validateAuth, validateBody, validateParams } from '../../middlewares'
+
+import { UserRole } from '../../consts'
 import { FeatureDTO, IdParams } from '../dtos'
+import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { FeatureService } from '../services'
 
 const router = Router()

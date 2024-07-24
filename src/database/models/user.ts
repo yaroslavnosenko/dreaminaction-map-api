@@ -1,11 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize'
-import { connection } from '../connection'
 
-export enum UserRole {
-  user = 'user',
-  manager = 'manager',
-  admin = 'admin',
-}
+import { UserRole } from '../../consts'
+import { connection } from '../connection'
 
 export interface UserAttributes {
   id: string

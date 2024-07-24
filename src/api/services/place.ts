@@ -1,5 +1,6 @@
-import { Accessibility, Place } from '../../database/models'
-import { BoundsParams, PlaceDTO } from '../dtos/place'
+import { Accessibility } from '../../consts'
+import { Place } from '../../database'
+import { BoundsParams, PlaceDTO } from '../dtos'
 
 export class PlaceService {
   public static async getAll(): Promise<Place[]> {

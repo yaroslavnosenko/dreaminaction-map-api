@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
-import { UserRole } from '../../database/models'
-import { validateAuth, validateBody, validateParams } from '../../middlewares'
+
+import { UserRole } from '../../consts'
 import {
   AccessibilityDTO,
   BoundsParams,
@@ -8,6 +8,7 @@ import {
   OwnerDTO,
   PlaceDTO,
 } from '../dtos'
+import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { PlaceService } from '../services'
 
 const router = Router()
@@ -138,6 +139,7 @@ router.put(
 router.put(
   '/:id/features',
   validateParams(IdParams),
+  validateBody(IdParams),
   validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
     try {

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { UserRole } from '../database/models'
+
+import { UserRole } from '../../consts'
 
 export const validateAuth = (
   roles?: UserRole[]

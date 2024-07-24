@@ -1,6 +1,8 @@
 import { Request, Response, Router } from 'express'
-import { validateBody, validateParams } from '../../middlewares'
+
+import { UserRole } from '../../consts'
 import { IdParams, UserRoleDTO } from '../dtos'
+import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { PlaceService, UserService } from '../services'
 
 const router = Router()
@@ -46,6 +48,7 @@ router.put(
   '/:id/role',
   validateParams(IdParams),
   validateBody(UserRoleDTO),
+  validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -63,6 +66,7 @@ router.put(
 
 router.delete(
   '/:id',
+  validateAuth([UserRole.admin]),
   validateParams(IdParams),
   async (req: Request, res: Response) => {
     try {

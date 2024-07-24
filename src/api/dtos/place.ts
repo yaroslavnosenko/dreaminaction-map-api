@@ -6,7 +6,8 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator'
-import { Accessibility, Category } from '../../database/models'
+
+import { Accessibility, Category } from '../../consts'
 
 export class PlaceDTO {
   @IsString()
@@ -40,6 +41,17 @@ export class AccessibilityDTO {
 export class OwnerDTO {
   @IsUUID()
   owner: string
+}
+
+export class PlaceFeaturesDTO {
+  @IsNumber()
+  neLat: number
+  @IsNumber()
+  neLng: number
+  @IsNumber()
+  swLat: number
+  @IsNumber()
+  swLng: number
 }
 
 export class BoundsParams {

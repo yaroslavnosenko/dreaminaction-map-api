@@ -1,8 +1,8 @@
 import { Request, Response, Router } from 'express'
-import { appConfigs } from '../../configs'
-import { UserRole } from '../../database/models'
-import { validateBody } from '../../middlewares'
+
+import { appConfigs, UserRole } from '../../consts'
 import { TokenDTO } from '../dtos'
+import { validateBody } from '../middlewares'
 import { AuthService, UserService } from '../services'
 
 const router = Router()

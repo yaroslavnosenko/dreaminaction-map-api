@@ -1,6 +1,7 @@
+import { NextFunction, Request, Response } from 'express'
+
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { NextFunction, Request, Response } from 'express'
 
 type Constructor<T> = { new (...args: any[]): T }
 

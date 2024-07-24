@@ -1,4 +1,5 @@
 import { SequelizeStorage, Umzug } from 'umzug'
+
 import { connection } from './connection'
 import { migrations } from './migrations/index'
 

@@ -1,4 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize'
+
 import { connection } from '../connection'
 
 export interface FeatureAttributes {

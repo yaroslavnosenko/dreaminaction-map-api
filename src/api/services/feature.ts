@@ -1,4 +1,4 @@
-import { Feature } from '../../database/models'
+import { Feature } from '../../database'
 import { FeatureDTO } from '../dtos'
 
 export class FeatureService {

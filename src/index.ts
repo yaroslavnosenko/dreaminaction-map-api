@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 import { app } from './app'
-import { appConfigs } from './configs'
+import { appConfigs } from './consts'
 import { connection, migrationsUp } from './database'
 
 dotenv.config()

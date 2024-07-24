@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
-import { appConfigs } from '../../configs'
+
+import { appConfigs } from '../../consts'
 
 export class AuthService {
   public static async validate3dPartyToken(

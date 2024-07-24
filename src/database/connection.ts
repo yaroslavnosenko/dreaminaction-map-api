@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize'
-import { appConfigs } from '../configs'
+
+import { appConfigs } from '../consts'
 
 export const connection = new Sequelize({
   dialect: 'postgres',

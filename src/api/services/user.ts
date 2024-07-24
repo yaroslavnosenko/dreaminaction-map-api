@@ -1,4 +1,5 @@
-import { User, UserRole } from '../../database/models'
+import { UserRole } from '../../consts'
+import { User } from '../../database'
 
 export class UserService {
   public static async create(
