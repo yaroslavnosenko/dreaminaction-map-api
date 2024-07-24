@@ -1,8 +1,8 @@
 import { Request } from 'express'
-import { PlaceService } from '../../services'
+import { Place } from '../../../database'
 
 export const isValidOwner = async (req: Request) => {
-  const place = await PlaceService.getOne(req.params.id)
+  const place = await Place.findByPk(req.params.id)
   return place?.userID === req.user?.id
 }
 

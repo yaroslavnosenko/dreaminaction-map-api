@@ -1,9 +1,9 @@
 import { Feature } from '../../database'
 import { FeatureRequest } from '../dtos'
-import { IdResponse } from '../dtos/responses'
+import { FeatureResponse, IdResponse } from '../dtos/responses'
 
 export class FeatureService {
-  public static async getAll(): Promise<Feature[]> {
+  public static async getAll(): Promise<FeatureResponse[]> {
     return await Feature.findAll()
   }
 

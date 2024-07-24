@@ -5,6 +5,7 @@ import {
   AccessibilityRequest,
   BoundsQuery,
   FeaturesRequest,
+  FiltersQuery,
   IdProp,
   PlaceRequest,
 } from '../dtos'
@@ -32,9 +33,11 @@ router.post(
 
 router.get(
   '/',
+  validateQuery(FiltersQuery),
   validateAuth([UserRole.admin, UserRole.manager]),
-  async (_: Request, res: Response) => {
-    const places = await PlaceService.getAll()
+  async (req: Request, res: Response) => {
+    const query = req.query as FiltersQuery
+    const places = await PlaceService.getAll(query)
     return res.status(200).json(places)
   }
 )
@@ -53,8 +56,9 @@ router.get(
   '/:id',
   validateParams(IdProp),
   async (req: Request, res: Response) => {
+    const withOwner = req.user?.role === UserRole.admin
     const { id } = req.params
-    const place = await PlaceService.getOne(id)
+    const place = await PlaceService.getOne(id, withOwner)
     return place ? res.status(200).json(place) : res.status(404).send()
   }
 )

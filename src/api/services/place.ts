@@ -1,15 +1,23 @@
 import { Accessibility } from '../../consts'
 import { Feature, Place, PlaceFeature } from '../../database'
-import { BoundsQuery, FeaturesRequest, PlaceRequest } from '../dtos'
+import {
+  BoundsQuery,
+  FeaturesRequest,
+  FiltersQuery,
+  PlaceRequest,
+} from '../dtos'
 import { IdResponse, PlaceResponse } from '../dtos/responses'
 
 export class PlaceService {
-  public static async getAll(): Promise<PlaceResponse[]> {
-    return Place.findAll()
+  public static async getOne(
+    id: string,
+    withOwner?: boolean
+  ): Promise<PlaceResponse | null> {
+    return Place.findByPk(id)
   }
 
-  public static async getOne(id: string): Promise<Place | null> {
-    return Place.findByPk(id)
+  public static async getAll(query: FiltersQuery): Promise<PlaceResponse[]> {
+    return Place.findAll()
   }
 
   public static async getByBounds(

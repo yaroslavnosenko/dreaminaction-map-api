@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { AuthService, UserService } from '../services'
+import { User } from '../../database'
+import { AuthService } from '../services'
 
 export const auth = async (req: Request, _: Response, next: NextFunction) => {
   try {
@@ -14,7 +15,7 @@ export const auth = async (req: Request, _: Response, next: NextFunction) => {
     if (!payload) {
       return next()
     }
-    req.user = await UserService.getOne(payload.uid)
+    req.user = await User.findByPk(payload.uid)
     next()
   } catch {
     next()

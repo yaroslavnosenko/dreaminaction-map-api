@@ -1,8 +1,13 @@
 import { Request, Response, Router } from 'express'
 
 import { UserRole } from '../../consts'
-import { IdProp, UserRoleRequest } from '../dtos'
-import { validateAuth, validateBody, validateParams } from '../middlewares'
+import { IdProp, QueryQuery, UserRoleRequest } from '../dtos'
+import {
+  validateAuth,
+  validateBody,
+  validateParams,
+  validateQuery,
+} from '../middlewares'
 import { PlaceService, UserService } from '../services'
 import { isMe } from './validations'
 
@@ -10,14 +15,12 @@ const router = Router()
 
 router.get(
   '/',
+  validateQuery(QueryQuery),
   validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
-    try {
-      const users = await UserService.getAll()
-      return res.status(200).json(users)
-    } catch {
-      return res.status(500).send()
-    }
+    const query = req.query as QueryQuery
+    const users = await UserService.getAll(query)
+    return res.status(200).json(users)
   }
 )
 

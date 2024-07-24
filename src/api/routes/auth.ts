@@ -24,8 +24,7 @@ router.post(
         lastName
       )
     }
-    const token = AuthService.createToken(user.id)
-    return res.status(200).json({ token })
+    return res.status(200).json(AuthService.createToken(user.id))
   }
 )
 

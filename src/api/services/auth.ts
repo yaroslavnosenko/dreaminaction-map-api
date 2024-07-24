@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 import { appConfigs } from '../../consts'
+import { TokenResponse } from '../dtos/responses'
 
 export class AuthService {
   public static async validate3dPartyToken(
@@ -11,8 +12,12 @@ export class AuthService {
     return { email: token + '@mail.mock', firstName: 'User', lastName: 'Name' }
   }
 
-  public static createToken(userId: string): string {
-    return jwt.sign({ uid: userId }, appConfigs.jwtSecret, { expiresIn: '30d' })
+  public static createToken(userId: string): TokenResponse {
+    return {
+      token: jwt.sign({ uid: userId }, appConfigs.jwtSecret, {
+        expiresIn: '30d',
+      }),
+    }
   }
 
   public static validateToken(token: string): { uid: string } | null {

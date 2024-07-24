@@ -1,5 +1,6 @@
 import { UserRole } from '../../consts'
 import { User } from '../../database'
+import { QueryQuery } from '../dtos'
 import { UserRepsonse } from '../dtos/responses'
 
 export class UserService {
@@ -12,15 +13,17 @@ export class UserService {
     return User.create({ email, role, firstName, lastName })
   }
 
-  public static async getOne(id: string): Promise<User | null> {
+  public static async getOne(id: string): Promise<UserRepsonse | null> {
     return User.findOne({ where: { id } })
   }
 
-  public static async getOneByEmail(email: string): Promise<User | null> {
+  public static async getOneByEmail(
+    email: string
+  ): Promise<UserRepsonse | null> {
     return User.findOne({ where: { email } })
   }
 
-  public static async getAll(query: string = ''): Promise<UserRepsonse[]> {
+  public static async getAll(query: QueryQuery): Promise<UserRepsonse[]> {
     return User.findAll()
   }
 
