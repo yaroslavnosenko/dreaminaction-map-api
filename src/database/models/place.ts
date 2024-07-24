@@ -7,6 +7,7 @@ import { User } from './user'
 export interface PlaceAttributes {
   id: string
   name: string
+  address: string
   category: Category
   accessibility: Accessibility
   lat: number
@@ -24,6 +25,7 @@ export class Place
 {
   id!: string
   name!: string
+  address!: string
   category!: Category
   accessibility!: Accessibility
   lat!: number
@@ -37,6 +39,7 @@ Place.init(
     id: { type: DataTypes.UUID, primaryKey: true },
     name: { type: DataTypes.STRING, allowNull: false },
     category: { type: DataTypes.STRING, allowNull: false },
+    address: { type: DataTypes.STRING, allowNull: false },
     accessibility: { type: DataTypes.INTEGER, allowNull: false },
     lat: { type: DataTypes.DOUBLE, allowNull: false },
     lng: { type: DataTypes.DOUBLE, allowNull: false },

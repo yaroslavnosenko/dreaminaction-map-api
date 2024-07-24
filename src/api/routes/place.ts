@@ -26,7 +26,7 @@ router.post(
   async (req: Request, res: Response) => {
     const dto = req.body as PlaceRequest
     const id = await PlaceService.create(req.user!.id, dto)
-    return res.status(201).json({ id })
+    return res.status(201).json(id)
   }
 )
 

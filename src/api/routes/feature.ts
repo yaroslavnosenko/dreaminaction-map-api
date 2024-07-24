@@ -14,7 +14,7 @@ router.post(
   async (req: Request, res: Response) => {
     const dto = req.body as FeatureRequest
     const id = await FeatureService.create(dto)
-    return res.status(201).json({ id })
+    return res.status(201).json(id)
   }
 )
 

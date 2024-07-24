@@ -7,6 +7,7 @@ export default {
     await context.createTable('places', {
       id: { type: DataTypes.UUID, primaryKey: true },
       name: { type: DataTypes.STRING, allowNull: false },
+      address: { type: DataTypes.STRING, allowNull: false },
       category: { type: DataTypes.STRING, allowNull: false },
       accessibility: { type: DataTypes.INTEGER, allowNull: false },
       lat: { type: DataTypes.DOUBLE, allowNull: false },
