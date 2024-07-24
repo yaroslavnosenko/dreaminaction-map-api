@@ -15,13 +15,14 @@ import {
   validateQuery,
 } from '../middlewares'
 import { PlaceService } from '../services'
+import { isValidOwner } from './validations'
 
 const router = Router()
 
 router.post(
   '/',
   validateBody(PlaceDTO),
-  validateAuth(),
+  validateAuth([UserRole.admin, UserRole.manager, UserRole.user]),
   async (req: Request, res: Response) => {
     try {
       const dto = req.body as PlaceDTO
@@ -78,17 +79,10 @@ router.put(
   '/:id',
   validateParams(IdProp),
   validateBody(PlaceDTO),
-  validateAuth(),
+  validateAuth([UserRole.admin], isValidOwner),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
-      // Only owner or Admin
-      if (req.user?.role !== UserRole.admin) {
-        const place = await PlaceService.getOne(id)
-        if (place?.userID !== req.user?.id) {
-          return res.status(403).send()
-        }
-      }
       const place = req.body as PlaceDTO
       const updated = await PlaceService.update(id, place)
       return res.status(200).json({ id: updated })
@@ -164,17 +158,10 @@ router.put(
 router.delete(
   '/:id',
   validateParams(IdProp),
-  validateAuth(),
+  validateAuth([UserRole.admin], isValidOwner),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
-      // Only owner or Admin
-      if (req.user?.role !== UserRole.admin) {
-        const place = await PlaceService.getOne(id)
-        if (place?.userID !== req.user?.id) {
-          return res.status(403).send()
-        }
-      }
       await PlaceService.delete(id)
       return res.status(200).send()
     } catch {

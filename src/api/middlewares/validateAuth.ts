@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 
 import { UserRole } from '../../consts'
 
-export const validateAuth = (roles?: UserRole[]) => {
+export const validateAuth = (
+  roles: UserRole[],
+  orFn?: (req: Request) => Promise<boolean>
+) => {
   return async (
     req: Request,
     res: Response,
@@ -13,10 +16,21 @@ export const validateAuth = (roles?: UserRole[]) => {
       res.status(403).send()
       return
     }
-    if (roles && !roles.includes(user.role)) {
-      res.status(403).send()
+
+    if (roles.includes(user.role)) {
+      next()
       return
     }
-    next()
+
+    if (orFn) {
+      const result = await orFn(req)
+      if (result) {
+        next()
+        return
+      }
+    }
+
+    res.status(403).send()
+    return
   }
 }

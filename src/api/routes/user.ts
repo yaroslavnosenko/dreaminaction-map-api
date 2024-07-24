@@ -4,6 +4,7 @@ import { UserRole } from '../../consts'
 import { IdProp, UserRoleDTO } from '../dtos'
 import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { PlaceService, UserService } from '../services'
+import { isMe } from './validations'
 
 const router = Router()
 
@@ -23,7 +24,7 @@ router.get(
 router.get(
   '/:id',
   validateParams(IdProp),
-  validateAuth(),
+  validateAuth([UserRole.admin, UserRole.manager], isMe),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -38,6 +39,7 @@ router.get(
 router.get(
   '/:id/places',
   validateParams(IdProp),
+  validateAuth([UserRole.admin, UserRole.manager], isMe),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
