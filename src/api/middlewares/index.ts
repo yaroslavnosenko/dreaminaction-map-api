@@ -1,4 +1,4 @@
 export * from './auth'
-export * from './protect'
+export * from './validateAuth'
 export * from './validateBody'
 export * from './validateParams'
