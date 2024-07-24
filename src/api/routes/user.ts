@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { validateBody, validateParams } from '../../middlewares'
-import { IdDTO, UserRoleDTO } from '../dtos'
+import { IdParams, UserRoleDTO } from '../dtos'
 import { PlaceService, UserService } from '../services'
 
 const router = Router()
@@ -16,7 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.get(
   '/:id',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -30,7 +30,7 @@ router.get(
 
 router.get(
   '/:id/places',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -44,7 +44,7 @@ router.get(
 
 router.put(
   '/:id/role',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   validateBody(UserRoleDTO),
   async (req: Request, res: Response) => {
     try {
@@ -63,7 +63,7 @@ router.put(
 
 router.delete(
   '/:id',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params

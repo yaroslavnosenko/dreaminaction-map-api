@@ -1,6 +1,6 @@
 import { IsEnum, IsString, IsUUID } from 'class-validator'
 
-export class IdDTO {
+export class IdParams {
   @IsUUID()
   id: string
 }

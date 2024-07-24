@@ -32,11 +32,6 @@ export class PlaceDTO {
   description?: string
 }
 
-export class CreatePlaceDTO extends PlaceDTO {
-  @IsUUID()
-  owner: string
-}
-
 export class AccessibilityDTO {
   @IsEnum(Accessibility)
   accessibility: Accessibility
@@ -47,7 +42,7 @@ export class OwnerDTO {
   owner: string
 }
 
-export class BoundsDTO {
+export class BoundsParams {
   @IsNumber()
   neLat: number
   @IsNumber()

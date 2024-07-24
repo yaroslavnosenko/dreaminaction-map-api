@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
-import { validateBody, validateParams } from '../../middlewares'
-import { FeatureDTO, IdDTO } from '../dtos'
+import { UserRole } from '../../database/models'
+import { validateAuth, validateBody, validateParams } from '../../middlewares'
+import { FeatureDTO, IdParams } from '../dtos'
 import { FeatureService } from '../services'
 
 const router = Router()
@@ -8,6 +9,7 @@ const router = Router()
 router.post(
   '/',
   validateBody(FeatureDTO),
+  validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const dto = req.body as FeatureDTO
@@ -31,7 +33,8 @@ router.get('/', async (_: Request, res: Response) => {
 router.put(
   '/:id',
   validateBody(FeatureDTO),
-  validateParams(IdDTO),
+  validateParams(IdParams),
+  validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -49,7 +52,8 @@ router.put(
 
 router.delete(
   '/:id',
-  validateParams(IdDTO),
+  validateParams(IdParams),
+  validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params

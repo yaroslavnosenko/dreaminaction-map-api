@@ -1,46 +1,51 @@
 import { Request, Response, Router } from 'express'
-import { validateBody, validateParams } from '../../middlewares'
+import { UserRole } from '../../database/models'
+import { validateAuth, validateBody, validateParams } from '../../middlewares'
 import {
   AccessibilityDTO,
-  BoundsDTO,
-  CreatePlaceDTO,
-  IdDTO,
+  BoundsParams,
+  IdParams,
   OwnerDTO,
   PlaceDTO,
 } from '../dtos'
-import { PlaceService, UserService } from '../services'
+import { PlaceService } from '../services'
 
 const router = Router()
 
-router.post('/', validateBody(CreatePlaceDTO), async (req, res) => {
-  try {
-    const dto = req.body as CreatePlaceDTO
-    const user = await UserService.getOne(dto.owner)
-    if (!user) {
-      return res.status(404).send()
+router.post(
+  '/',
+  validateBody(PlaceDTO),
+  validateAuth(),
+  async (req: Request, res: Response) => {
+    try {
+      const dto = req.body as PlaceDTO
+      const id = await PlaceService.create(req.user!.id, dto)
+      return res.status(201).json({ id })
+    } catch (error) {
+      return res.status(500).send()
     }
-    const id = await PlaceService.create(dto)
-    return res.status(201).json({ id })
-  } catch (error) {
-    return res.status(500).send()
   }
-})
+)
 
-router.get('/', async (req: Request, res: Response) => {
-  try {
-    const places = await PlaceService.getAll()
-    return res.status(200).json(places)
-  } catch {
-    return res.status(500).send()
+router.get(
+  '/',
+  validateAuth([UserRole.admin, UserRole.manager]),
+  async (req: Request, res: Response) => {
+    try {
+      const places = await PlaceService.getAll()
+      return res.status(200).json(places)
+    } catch {
+      return res.status(500).send()
+    }
   }
-})
+)
 
 router.get(
   '/bounds',
-  validateParams(BoundsDTO),
+  validateParams(BoundsParams),
   async (req: Request, res: Response) => {
     try {
-      const bounds = req.params as unknown as BoundsDTO
+      const bounds = req.params as unknown as BoundsParams
       const places = await PlaceService.getByBounds(bounds)
       return res.status(200).json(places)
     } catch {
@@ -51,7 +56,7 @@ router.get(
 
 router.get(
   '/:id',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -65,11 +70,19 @@ router.get(
 
 router.put(
   '/:id',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   validateBody(PlaceDTO),
+  validateAuth(),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
+      // Only owner or Admin
+      if (req.user?.role !== UserRole.admin) {
+        const place = await PlaceService.getOne(id)
+        if (place?.userID !== req.user?.id) {
+          return res.status(403).send()
+        }
+      }
       const place = req.body as PlaceDTO
       const updated = await PlaceService.update(id, place)
       return res.status(200).json({ id: updated })
@@ -84,8 +97,9 @@ router.put(
 
 router.put(
   '/:id/owner',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   validateBody(OwnerDTO),
+  validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -103,8 +117,9 @@ router.put(
 
 router.put(
   '/:id/accessibility',
-  validateParams(IdDTO),
+  validateParams(IdParams),
   validateBody(AccessibilityDTO),
+  validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -122,7 +137,8 @@ router.put(
 
 router.put(
   '/:id/features',
-  validateParams(IdDTO),
+  validateParams(IdParams),
+  validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
     try {
       // TODO Implement
@@ -135,10 +151,18 @@ router.put(
 
 router.delete(
   '/:id',
-  validateParams(IdDTO),
+  validateParams(IdParams),
+  validateAuth(),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
+      // Only owner or Admin
+      if (req.user?.role !== UserRole.admin) {
+        const place = await PlaceService.getOne(id)
+        if (place?.userID !== req.user?.id) {
+          return res.status(403).send()
+        }
+      }
       await PlaceService.delete(id)
       return res.status(200).send()
     } catch {

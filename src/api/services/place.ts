@@ -1,5 +1,5 @@
 import { Accessibility, Place } from '../../database/models'
-import { BoundsDTO, CreatePlaceDTO, PlaceDTO } from '../dtos/place'
+import { BoundsParams, PlaceDTO } from '../dtos/place'
 
 export class PlaceService {
   public static async getAll(): Promise<Place[]> {
@@ -10,7 +10,7 @@ export class PlaceService {
     return Place.findByPk(id)
   }
 
-  public static async getByBounds(bounds: BoundsDTO): Promise<Place[]> {
+  public static async getByBounds(bounds: BoundsParams): Promise<Place[]> {
     return Place.findAll()
   }
 
@@ -18,10 +18,9 @@ export class PlaceService {
     return Place.findAll({ where: { userID } })
   }
 
-  public static async create(placeDTO: CreatePlaceDTO): Promise<string> {
-    const { owner, ...place } = placeDTO
+  public static async create(userID: string, place: PlaceDTO): Promise<string> {
     const { id } = await Place.create({
-      userID: owner,
+      userID,
       accessibility: Accessibility.unknown,
       ...place,
     })
