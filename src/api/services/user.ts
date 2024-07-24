@@ -8,17 +8,15 @@ export class UserService {
     role: UserRole,
     firstName?: string,
     lastName?: string
-  ): Promise<UserRepsonse> {
+  ): Promise<User> {
     return User.create({ email, role, firstName, lastName })
   }
 
-  public static async getOne(id: string): Promise<UserRepsonse | null> {
+  public static async getOne(id: string): Promise<User | null> {
     return User.findOne({ where: { id } })
   }
 
-  public static async getOneByEmail(
-    email: string
-  ): Promise<UserRepsonse | null> {
+  public static async getOneByEmail(email: string): Promise<User | null> {
     return User.findOne({ where: { email } })
   }
 

@@ -8,7 +8,7 @@ export class PlaceService {
     return Place.findAll()
   }
 
-  public static async getOne(id: string): Promise<PlaceResponse | null> {
+  public static async getOne(id: string): Promise<Place | null> {
     return Place.findByPk(id)
   }
 
