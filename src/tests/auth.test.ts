@@ -1,13 +1,9 @@
 import request from 'supertest'
 import { app } from '../app'
+import { UserRole } from '../database/models'
+import { auth } from './_auth'
 
 test('POST /auth', async () => {
   await request(app).post('/auth').expect(400)
-  await request(app)
-    .post('/auth')
-    .send({ provider: 'facebook', token: 'admin' })
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toHaveProperty('token')
-    })
+  await auth(UserRole.admin)
 })

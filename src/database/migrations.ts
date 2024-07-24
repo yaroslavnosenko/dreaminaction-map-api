@@ -6,7 +6,7 @@ const umzug = new Umzug({
   migrations,
   context: connection.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize: connection }),
-  logger: console,
+  logger: undefined,
 })
 
 export const migrationsUp = async () => {
@@ -14,5 +14,5 @@ export const migrationsUp = async () => {
 }
 
 export const migrationsDown = async () => {
-  await umzug.down()
+  await umzug.down({ to: 0 })
 }
