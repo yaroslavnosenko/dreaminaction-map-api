@@ -53,7 +53,10 @@ export class PlaceService {
   static async setFeatures(
     id: string,
     { features }: FeaturesRequest
-  ): Promise<boolean> {
+  ): Promise<boolean | null> {
+    const place = await Place.findByPk(id)
+    if (!place) return null
+
     const newIds = features.map((feat) => feat.id)
     if (newIds.length === 0) {
       await PlaceFeature.destroy({ where: { placeID: id } })

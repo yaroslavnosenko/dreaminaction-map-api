@@ -11,10 +11,12 @@ export class FeatureService {
     return id
   }
 
-  public static async update(id: string, feature: FeatureDTO): Promise<string> {
+  public static async update(
+    id: string,
+    feature: FeatureDTO
+  ): Promise<boolean> {
     const [count] = await Feature.update({ ...feature }, { where: { id } })
-    if (count !== 1) throw new Error('NOT_FOUND')
-    return id
+    return count === 1
   }
 
   public static async delete(id: string): Promise<void> {

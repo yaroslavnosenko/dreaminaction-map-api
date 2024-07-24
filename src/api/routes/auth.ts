@@ -11,25 +11,21 @@ router.post(
   '/',
   validateBody(TokenDTO),
   async (req: Request, res: Response) => {
-    try {
-      const { provider, token: extToken } = req.body as TokenDTO
-      const { email, firstName, lastName } =
-        await AuthService.validate3dPartyToken(provider, extToken)
-      let user = await UserService.getOneByEmail(email)
-      if (!user) {
-        const isAdmin = appConfigs.adminEmail === email
-        user = await UserService.create(
-          email,
-          isAdmin ? UserRole.admin : UserRole.user,
-          firstName,
-          lastName
-        )
-      }
-      const token = AuthService.createToken(user.id)
-      return res.status(200).json({ token })
-    } catch (error) {
-      res.status(500).send()
+    const { provider, token: extToken } = req.body as TokenDTO
+    const { email, firstName, lastName } =
+      await AuthService.validate3dPartyToken(provider, extToken)
+    let user = await UserService.getOneByEmail(email)
+    if (!user) {
+      const isAdmin = appConfigs.adminEmail === email
+      user = await UserService.create(
+        email,
+        isAdmin ? UserRole.admin : UserRole.user,
+        firstName,
+        lastName
+      )
     }
+    const token = AuthService.createToken(user.id)
+    return res.status(200).json({ token })
   }
 )
 

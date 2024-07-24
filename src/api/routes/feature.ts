@@ -12,23 +12,15 @@ router.post(
   validateBody(FeatureDTO),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
-    try {
-      const dto = req.body as FeatureDTO
-      const id = await FeatureService.create(dto)
-      return res.status(201).json({ id })
-    } catch {
-      return res.status(500).send()
-    }
+    const dto = req.body as FeatureDTO
+    const id = await FeatureService.create(dto)
+    return res.status(201).json({ id })
   }
 )
 
 router.get('/', async (_: Request, res: Response) => {
-  try {
-    const features = await FeatureService.getAll()
-    return res.status(200).json(features)
-  } catch {
-    return res.status(500).send()
-  }
+  const features = await FeatureService.getAll()
+  return res.status(200).json(features)
 })
 
 router.put(
@@ -37,17 +29,10 @@ router.put(
   validateParams(IdProp),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params
-      const dto = req.body as FeatureDTO
-      await FeatureService.update(id, dto)
-      return res.status(200).json({ id })
-    } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
-        return res.status(404).send()
-      }
-      return res.status(500).send()
-    }
+    const { id } = req.params
+    const dto = req.body as FeatureDTO
+    const isSuccess = await FeatureService.update(id, dto)
+    return isSuccess ? res.status(200).json({ id }) : res.status(404).send()
   }
 )
 
@@ -56,13 +41,9 @@ router.delete(
   validateParams(IdProp),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params
-      await FeatureService.delete(id)
-      return res.status(200).send()
-    } catch {
-      return res.status(500).send()
-    }
+    const { id } = req.params
+    await FeatureService.delete(id)
+    return res.status(200).send()
   }
 )
 
