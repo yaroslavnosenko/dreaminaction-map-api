@@ -2,11 +2,11 @@ import { Request, Response, Router } from 'express'
 
 import { UserRole } from '../../consts'
 import {
-  AccessibilityDTO,
+  AccessibilityRequest,
   BoundsQuery,
   FeaturesRequest,
   IdProp,
-  PlaceDTO,
+  PlaceRequest,
 } from '../dtos'
 import {
   validateAuth,
@@ -21,10 +21,10 @@ const router = Router()
 
 router.post(
   '/',
-  validateBody(PlaceDTO),
+  validateBody(PlaceRequest),
   validateAuth([UserRole.admin, UserRole.manager, UserRole.user]),
   async (req: Request, res: Response) => {
-    const dto = req.body as PlaceDTO
+    const dto = req.body as PlaceRequest
     const id = await PlaceService.create(req.user!.id, dto)
     return res.status(201).json({ id })
   }
@@ -62,11 +62,11 @@ router.get(
 router.put(
   '/:id',
   validateParams(IdProp),
-  validateBody(PlaceDTO),
+  validateBody(PlaceRequest),
   validateAuth([UserRole.admin], isValidOwner),
   async (req: Request, res: Response) => {
     const { id } = req.params
-    const place = req.body as PlaceDTO
+    const place = req.body as PlaceRequest
     const isSuccess = await PlaceService.update(id, place)
     return isSuccess ? res.status(200).json({ id }) : res.status(404).send()
   }
@@ -88,11 +88,11 @@ router.put(
 router.put(
   '/:id/accessibility',
   validateParams(IdProp),
-  validateBody(AccessibilityDTO),
+  validateBody(AccessibilityRequest),
   validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
     const { id } = req.params
-    const { accessibility } = req.body as AccessibilityDTO
+    const { accessibility } = req.body as AccessibilityRequest
     const isSuccess = await PlaceService.setAccessibility(id, accessibility)
     return isSuccess ? res.status(200).json({ id }) : res.status(404).send()
   }

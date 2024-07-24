@@ -7,14 +7,34 @@ import {
   IsString,
   IsUUID,
   MaxLength,
+  MinLength,
   ValidateNested,
 } from 'class-validator'
 
 import { Type } from 'class-transformer'
-import { Accessibility, Category } from '../../consts'
-import { QueryQuery } from './base'
+import { Accessibility, Category, UserRole } from '../../consts'
 
-export class PlaceDTO {
+export class TokenRequest {
+  @IsEnum(['google', 'facebook'])
+  provider: 'google' | 'facebook'
+
+  @IsString()
+  token: string
+}
+
+export class UserRoleRequest {
+  @IsEnum(UserRole)
+  role: UserRole
+}
+
+export class FeatureRequest {
+  @IsString()
+  @MinLength(3)
+  @MaxLength(120)
+  name: string
+}
+
+export class PlaceRequest {
   @IsString()
   @MaxLength(120)
   name: string
@@ -38,7 +58,7 @@ export class PlaceDTO {
   description?: string
 }
 
-export class AccessibilityDTO {
+export class AccessibilityRequest {
   @IsEnum(Accessibility)
   accessibility: Accessibility
 }
@@ -52,34 +72,10 @@ class FeatureMapping {
   @IsBoolean()
   available: boolean
 }
+
 export class FeaturesRequest {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => FeatureMapping)
   features: FeatureMapping[]
-}
-
-// Queries
-
-export class FiltersQuery extends QueryQuery {
-  @IsArray()
-  @IsEnum(Category, { each: true })
-  @IsOptional()
-  categories?: Category[]
-
-  @IsArray()
-  @IsEnum(Accessibility, { each: true })
-  @IsOptional()
-  accessibilities?: Accessibility[]
-}
-
-export class BoundsQuery extends FiltersQuery {
-  @IsNumber()
-  neLat: number
-  @IsNumber()
-  neLng: number
-  @IsNumber()
-  swLat: number
-  @IsNumber()
-  swLng: number
 }

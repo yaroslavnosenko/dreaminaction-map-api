@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 
 import { UserRole } from '../../consts'
-import { IdProp, UserRoleDTO } from '../dtos'
+import { IdProp, UserRoleRequest } from '../dtos'
 import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { PlaceService, UserService } from '../services'
 import { isMe } from './validations'
@@ -54,12 +54,12 @@ router.get(
 router.put(
   '/:id/role',
   validateParams(IdProp),
-  validateBody(UserRoleDTO),
+  validateBody(UserRoleRequest),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
-      const { role } = req.body as UserRoleDTO
+      const { role } = req.body as UserRoleRequest
       const result = await UserService.setRole(id, role)
       if (!result) {
         return res.status(404).send()

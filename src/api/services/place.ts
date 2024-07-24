@@ -1,6 +1,6 @@
 import { Accessibility } from '../../consts'
 import { Feature, Place, PlaceFeature } from '../../database'
-import { BoundsQuery, FeaturesRequest, PlaceDTO } from '../dtos'
+import { BoundsQuery, FeaturesRequest, PlaceRequest } from '../dtos'
 
 export class PlaceService {
   public static async getAll(): Promise<Place[]> {
@@ -19,7 +19,10 @@ export class PlaceService {
     return Place.findAll({ where: { userID } })
   }
 
-  public static async create(userID: string, place: PlaceDTO): Promise<string> {
+  public static async create(
+    userID: string,
+    place: PlaceRequest
+  ): Promise<string> {
     const { id } = await Place.create({
       userID,
       accessibility: Accessibility.unknown,
@@ -28,7 +31,10 @@ export class PlaceService {
     return id
   }
 
-  public static async update(id: string, place: PlaceDTO): Promise<boolean> {
+  public static async update(
+    id: string,
+    place: PlaceRequest
+  ): Promise<boolean> {
     const [count] = await Place.update({ ...place }, { where: { id } })
     return count === 1
   }
