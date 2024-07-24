@@ -27,7 +27,7 @@ router.post(
       }
       const token = AuthService.createToken(user.id)
       return res.status(200).json({ token })
-    } catch {
+    } catch (error) {
       res.status(500).send()
     }
   }

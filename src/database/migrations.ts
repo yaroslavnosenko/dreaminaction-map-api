@@ -1,17 +1,18 @@
 import { SequelizeStorage, Umzug } from 'umzug'
 import { connection } from './connection'
+import { migrations } from './migrations/index'
 
 const umzug = new Umzug({
-  migrations: { glob: 'src/database/migrations/*.{js,ts}' },
+  migrations,
   context: connection.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize: connection }),
   logger: console,
 })
 
-export const migrartionsUp = async () => {
+export const migrationsUp = async () => {
   await umzug.up()
 }
 
-export const migrartionsDown = async () => {
+export const migrationsDown = async () => {
   await umzug.down()
 }

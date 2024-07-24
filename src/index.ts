@@ -2,14 +2,14 @@ import dotenv from 'dotenv'
 
 import { app } from './app'
 import { appConfigs } from './configs'
-import { connection, migrartionsUp } from './database'
+import { connection, migrationsUp } from './database'
 
 dotenv.config()
 
 const bootstrap = async (): Promise<void> => {
   try {
     await connection.authenticate()
-    await migrartionsUp()
+    await migrationsUp()
     app.listen(appConfigs.port, () => console.log('Server started 🚀'))
   } catch (error) {
     console.log(error)
