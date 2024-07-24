@@ -1,8 +1,8 @@
-import { UserRole } from '../database/models'
-
 import request from 'supertest'
-import { AuthService } from '../api/services'
-import { app } from '../app'
+
+import { AuthService } from '../src/api/services'
+import { app } from '../src/app'
+import { UserRole } from '../src/consts'
 
 export const auth = async (role: UserRole) => {
   const response = await request(app)

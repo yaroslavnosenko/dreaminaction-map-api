@@ -1,7 +1,8 @@
 import { DataTypes, Model } from 'sequelize'
 
 import { connection } from '../connection'
-import { Feature, Place } from './'
+import { Feature } from './feature'
+import { Place } from './place'
 
 export interface PlaceFeatureAttributes {
   available: boolean

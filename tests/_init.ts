@@ -1,4 +1,4 @@
-import { connection, migrationsDown, migrationsUp } from '../database'
+import { connection, migrationsDown, migrationsUp } from '../src/database'
 
 beforeAll(async () => {
   await connection.authenticate()

@@ -2,7 +2,7 @@ import { DataTypes, Model, Optional } from 'sequelize'
 
 import { Accessibility, Category } from '../../consts'
 import { connection } from '../connection'
-import { User } from './'
+import { User } from './user'
 
 export interface PlaceAttributes {
   id: string

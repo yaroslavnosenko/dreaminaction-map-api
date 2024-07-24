@@ -1,6 +1,6 @@
 import request from 'supertest'
-import { app } from '../app'
-import { UserRole } from '../database/models'
+import { app } from '../src/app'
+import { UserRole } from '../src/consts'
 import { auth } from './_auth'
 
 test('POST /auth', async () => {
