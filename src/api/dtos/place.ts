@@ -1,13 +1,18 @@
 import {
+  IsArray,
+  IsBoolean,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  ValidateNested,
 } from 'class-validator'
 
+import { Type } from 'class-transformer'
 import { Accessibility, Category } from '../../consts'
+import { QueryQuery } from './base'
 
 export class PlaceDTO {
   @IsString()
@@ -38,23 +43,37 @@ export class AccessibilityDTO {
   accessibility: Accessibility
 }
 
-export class OwnerDTO {
+// Places - Features
+
+class FeatureMapping {
   @IsUUID()
-  owner: string
+  id: string
+
+  @IsBoolean()
+  available: boolean
+}
+export class FeaturesRequest {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FeatureMapping)
+  features: FeatureMapping[]
 }
 
-export class PlaceFeaturesDTO {
-  @IsNumber()
-  neLat: number
-  @IsNumber()
-  neLng: number
-  @IsNumber()
-  swLat: number
-  @IsNumber()
-  swLng: number
+// Queries
+
+export class FiltersQuery extends QueryQuery {
+  @IsArray()
+  @IsEnum(Category, { each: true })
+  @IsOptional()
+  categories?: Category[]
+
+  @IsArray()
+  @IsEnum(Accessibility, { each: true })
+  @IsOptional()
+  accessibilities?: Accessibility[]
 }
 
-export class BoundsParams {
+export class BoundsQuery extends FiltersQuery {
   @IsNumber()
   neLat: number
   @IsNumber()

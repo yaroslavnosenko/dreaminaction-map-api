@@ -3,12 +3,17 @@ import { Request, Response, Router } from 'express'
 import { UserRole } from '../../consts'
 import {
   AccessibilityDTO,
-  BoundsParams,
-  IdParams,
-  OwnerDTO,
+  BoundsQuery,
+  FeaturesRequest,
+  IdProp,
   PlaceDTO,
 } from '../dtos'
-import { validateAuth, validateBody, validateParams } from '../middlewares'
+import {
+  validateAuth,
+  validateBody,
+  validateParams,
+  validateQuery,
+} from '../middlewares'
 import { PlaceService } from '../services'
 
 const router = Router()
@@ -43,10 +48,10 @@ router.get(
 
 router.get(
   '/bounds',
-  validateParams(BoundsParams),
+  validateQuery(BoundsQuery),
   async (req: Request, res: Response) => {
     try {
-      const bounds = req.params as unknown as BoundsParams
+      const bounds = req.query as unknown as BoundsQuery
       const places = await PlaceService.getByBounds(bounds)
       return res.status(200).json(places)
     } catch {
@@ -57,7 +62,7 @@ router.get(
 
 router.get(
   '/:id',
-  validateParams(IdParams),
+  validateParams(IdProp),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -71,7 +76,7 @@ router.get(
 
 router.put(
   '/:id',
-  validateParams(IdParams),
+  validateParams(IdProp),
   validateBody(PlaceDTO),
   validateAuth(),
   async (req: Request, res: Response) => {
@@ -98,19 +103,19 @@ router.put(
 
 router.put(
   '/:id/owner',
-  validateParams(IdParams),
-  validateBody(OwnerDTO),
+  validateParams(IdProp),
+  validateBody(IdProp),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
-      const { owner } = req.body as OwnerDTO
-      await PlaceService.setOwner(id, owner)
-      return res.status(200).json({ id })
-    } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
+      const { id: owner } = req.body as IdProp
+      const result = await PlaceService.setOwner(id, owner)
+      if (!result) {
         return res.status(404).send()
       }
+      return res.status(200).json({ id })
+    } catch (error) {
       return res.status(500).send()
     }
   }
@@ -118,19 +123,19 @@ router.put(
 
 router.put(
   '/:id/accessibility',
-  validateParams(IdParams),
+  validateParams(IdProp),
   validateBody(AccessibilityDTO),
   validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
       const { accessibility } = req.body as AccessibilityDTO
-      await PlaceService.setAccessibility(id, accessibility)
-      return res.status(200).json({ id })
-    } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
+      const result = await PlaceService.setAccessibility(id, accessibility)
+      if (!result) {
         return res.status(404).send()
       }
+      return res.status(200).json({ id })
+    } catch (error) {
       return res.status(500).send()
     }
   }
@@ -138,13 +143,18 @@ router.put(
 
 router.put(
   '/:id/features',
-  validateParams(IdParams),
-  validateBody(IdParams),
+  validateParams(IdProp),
+  validateBody(FeaturesRequest),
   validateAuth([UserRole.admin, UserRole.manager]),
   async (req: Request, res: Response) => {
     try {
-      // TODO Implement
-      return res.status(200).send()
+      const { id } = req.params
+      const body = req.body as FeaturesRequest
+      const result = await PlaceService.setFeatures(id, body)
+      if (!result) {
+        return res.status(400).send()
+      }
+      return res.status(200).json({ id })
     } catch (error) {
       return res.status(500).send()
     }
@@ -153,7 +163,7 @@ router.put(
 
 router.delete(
   '/:id',
-  validateParams(IdParams),
+  validateParams(IdProp),
   validateAuth(),
   async (req: Request, res: Response) => {
     try {

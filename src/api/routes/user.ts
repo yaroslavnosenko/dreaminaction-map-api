@@ -1,29 +1,34 @@
 import { Request, Response, Router } from 'express'
 
 import { UserRole } from '../../consts'
-import { IdParams, UserRoleDTO } from '../dtos'
+import { IdProp, UserRoleDTO } from '../dtos'
 import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { PlaceService, UserService } from '../services'
 
 const router = Router()
 
-router.get('/', async (req: Request, res: Response) => {
-  try {
-    const users = await UserService.getAll()
-    return res.status(200).json(users)
-  } catch {
-    return res.status(500).send()
+router.get(
+  '/',
+  validateAuth([UserRole.admin, UserRole.manager]),
+  async (req: Request, res: Response) => {
+    try {
+      const users = await UserService.getAll()
+      return res.status(200).json(users)
+    } catch {
+      return res.status(500).send()
+    }
   }
-})
+)
 
 router.get(
   '/:id',
-  validateParams(IdParams),
+  validateParams(IdProp),
+  validateAuth(),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
       const user = await UserService.getOne(id)
-      return user ? res.status(200).json(user) : res.status(404)
+      return user ? res.status(200).json(user) : res.status(404).send()
     } catch {
       return res.status(500).send()
     }
@@ -32,7 +37,7 @@ router.get(
 
 router.get(
   '/:id/places',
-  validateParams(IdParams),
+  validateParams(IdProp),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
@@ -46,19 +51,19 @@ router.get(
 
 router.put(
   '/:id/role',
-  validateParams(IdParams),
+  validateParams(IdProp),
   validateBody(UserRoleDTO),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params
       const { role } = req.body as UserRoleDTO
-      await UserService.setRole(id, role)
-      return res.status(200).json({ id })
-    } catch (error) {
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
+      const result = await UserService.setRole(id, role)
+      if (!result) {
         return res.status(404).send()
       }
+      return res.status(200).json({ id })
+    } catch (error) {
       return res.status(500).send()
     }
   }
@@ -67,7 +72,7 @@ router.put(
 router.delete(
   '/:id',
   validateAuth([UserRole.admin]),
-  validateParams(IdParams),
+  validateParams(IdProp),
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params

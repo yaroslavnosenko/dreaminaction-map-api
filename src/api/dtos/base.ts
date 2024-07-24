@@ -1,6 +1,6 @@
-import { IsEnum, IsString, IsUUID } from 'class-validator'
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator'
 
-export class IdParams {
+export class IdProp {
   @IsUUID()
   id: string
 }
@@ -11,4 +11,10 @@ export class TokenDTO {
 
   @IsString()
   token: string
+}
+
+export class QueryQuery {
+  @IsString()
+  @IsOptional()
+  query?: string
 }

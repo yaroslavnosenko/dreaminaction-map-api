@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 
 import { UserRole } from '../../consts'
-import { FeatureDTO, IdParams } from '../dtos'
+import { FeatureDTO, IdProp } from '../dtos'
 import { validateAuth, validateBody, validateParams } from '../middlewares'
 import { FeatureService } from '../services'
 
@@ -34,7 +34,7 @@ router.get('/', async (_: Request, res: Response) => {
 router.put(
   '/:id',
   validateBody(FeatureDTO),
-  validateParams(IdParams),
+  validateParams(IdProp),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {
@@ -53,7 +53,7 @@ router.put(
 
 router.delete(
   '/:id',
-  validateParams(IdParams),
+  validateParams(IdProp),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
     try {

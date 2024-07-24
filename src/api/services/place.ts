@@ -1,6 +1,6 @@
 import { Accessibility } from '../../consts'
-import { Place } from '../../database'
-import { BoundsParams, PlaceDTO } from '../dtos'
+import { Feature, Place, PlaceFeature } from '../../database'
+import { BoundsQuery, FeaturesRequest, PlaceDTO } from '../dtos'
 
 export class PlaceService {
   public static async getAll(): Promise<Place[]> {
@@ -11,7 +11,7 @@ export class PlaceService {
     return Place.findByPk(id)
   }
 
-  public static async getByBounds(bounds: BoundsParams): Promise<Place[]> {
+  public static async getByBounds(bounds: BoundsQuery): Promise<Place[]> {
     return Place.findAll()
   }
 
@@ -28,28 +28,52 @@ export class PlaceService {
     return id
   }
 
-  public static async update(id: string, place: PlaceDTO): Promise<string> {
+  public static async update(id: string, place: PlaceDTO): Promise<boolean> {
     const [count] = await Place.update({ ...place }, { where: { id } })
-    if (count !== 1) throw new Error('NOT_FOUND')
-    return id
+    return count === 1
   }
 
   public static async delete(id: string): Promise<void> {
     await Place.destroy({ where: { id } })
   }
 
-  public static async setOwner(id: string, userID: string): Promise<string> {
+  public static async setOwner(id: string, userID: string): Promise<boolean> {
     const [count] = await Place.update({ userID }, { where: { id } })
-    if (count !== 1) throw new Error('NOT_FOUND')
-    return id
+    return count === 1
   }
 
   public static async setAccessibility(
     id: string,
     accessibility: Accessibility
-  ): Promise<string> {
+  ): Promise<boolean> {
     const [count] = await Place.update({ accessibility }, { where: { id } })
-    if (count !== 1) throw new Error('NOT_FOUND')
-    return id
+    return count === 1
+  }
+
+  static async setFeatures(
+    id: string,
+    { features }: FeaturesRequest
+  ): Promise<boolean> {
+    const newIds = features.map((feat) => feat.id)
+    if (newIds.length === 0) {
+      await PlaceFeature.destroy({ where: { placeID: id } })
+      return true
+    }
+
+    const dbFeatures = await Feature.findAll({ where: { id: newIds } })
+    if (dbFeatures.length !== newIds.length) {
+      return false
+    }
+
+    await PlaceFeature.destroy({ where: { placeID: id } })
+
+    const newPlaceFeatures = features.map((feat) => ({
+      placeID: id,
+      featureID: feat.id,
+      available: feat.available,
+    }))
+    await PlaceFeature.bulkCreate(newPlaceFeatures)
+
+    return true
   }
 }

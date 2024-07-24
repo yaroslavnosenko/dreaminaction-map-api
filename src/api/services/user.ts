@@ -23,10 +23,9 @@ export class UserService {
     return User.findAll()
   }
 
-  public static async setRole(id: string, role: UserRole): Promise<string> {
+  public static async setRole(id: string, role: UserRole): Promise<boolean> {
     const [count] = await User.update({ role }, { where: { id } })
-    if (count !== 1) throw new Error('NOT_FOUND')
-    return id
+    return count === 1
   }
 
   public static async delete(id: string): Promise<void> {
