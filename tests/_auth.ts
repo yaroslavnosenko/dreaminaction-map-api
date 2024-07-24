@@ -2,12 +2,11 @@ import request from 'supertest'
 
 import { AuthService } from '../src/api/services'
 import { app } from '../src/app'
-import { UserRole } from '../src/consts'
 
-export const auth = async (role: UserRole) => {
+export const auth = async (pseudoToken: string) => {
   const response = await request(app)
     .post('/auth')
-    .send({ provider: 'facebook', token: role })
+    .send({ provider: 'facebook', token: pseudoToken })
     .expect(200)
   expect(response.body).toHaveProperty('token')
   const token = response.body['token']
