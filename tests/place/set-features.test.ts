@@ -98,55 +98,17 @@ test('admin set features', async () => {
   expect(res.body.unavailableFeatures.length).toEqual(1)
 })
 
-// test('set owner with invalid user', async () => {
-//   await request(app)
-//     .put('/places/' + placeId + '/owner')
-//     .send({ id: crypto.randomUUID() })
-//     .set({ Authorization: 'Bearer ' + admin.token })
-//     .expect(404)
-//   let res = await request(app)
-//     .get('/users/' + user.id + '/places')
-//     .set({ Authorization: 'Bearer ' + admin.token })
-//     .expect(200)
-//   expect(res.body[0].name).toEqual(place.name)
-// })
-
-// test('set owner with valid user', async () => {
-//   await request(app)
-//     .put('/places/' + placeId + '/owner')
-//     .send({ id: admin.id })
-//     .set({ Authorization: 'Bearer ' + admin.token })
-//     .expect(200)
-
-//   let res = await request(app)
-//     .get('/users/' + admin.id + '/places')
-//     .set({ Authorization: 'Bearer ' + admin.token })
-//     .expect(200)
-//   expect(res.body[0].name).toEqual(place.name)
-
-//   res = await request(app)
-//     .get('/users/' + user.id + '/places')
-//     .set({ Authorization: 'Bearer ' + admin.token })
-//     .expect(200)
-//   expect(res.body).toEqual([])
-// })
-
-// test('user or no auth set owner', async () => {
-//   await request(app)
-//     .put('/places/' + placeId + '/owner')
-//     .send({ id: crypto.randomUUID() })
-//     .set({ Authorization: 'Bearer ' + user.token })
-//     .expect(403)
-
-//   await request(app)
-//     .put('/places/' + placeId + '/owner')
-//     .send({ id: crypto.randomUUID() })
-//     .set({ Authorization: 'Bearer ' + user.token })
-//     .expect(403)
-
-//   let res = await request(app)
-//     .get('/users/' + user.id + '/places')
-//     .set({ Authorization: 'Bearer ' + admin.token })
-//     .expect(200)
-//   expect(res.body[0].name).toEqual(place.name)
-// })
+test('admin set empty features', async () => {
+  await request(app)
+    .put('/places/' + placeId + '/features')
+    .set({ Authorization: 'Bearer ' + admin.token })
+    .send({
+      features: [],
+    })
+    .expect(200)
+  let res = await request(app)
+    .get('/places/' + placeId)
+    .expect(200)
+  expect(res.body.availableFeatures.length).toEqual(0)
+  expect(res.body.unavailableFeatures.length).toEqual(0)
+})
