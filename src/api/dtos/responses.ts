@@ -48,6 +48,7 @@ export class PlaceResponse {
   @Expose()
   description?: string
   @Expose()
+  @Type(() => UserRepsonse)
   owner?: UserRepsonse
   @Expose()
   @Type(() => FeatureResponse)

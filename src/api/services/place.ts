@@ -55,7 +55,6 @@ export class PlaceService {
       ...other,
       accessibilities: filteredAccessibilities,
     })
-    console.log(neLat)
     return Place.findAll({
       limit: 100,
       where: {
