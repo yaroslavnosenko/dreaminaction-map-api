@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 import { UserRole } from '../../consts'
 import { User } from '../../database'
 import { QueryQuery } from '../dtos'
@@ -23,8 +25,22 @@ export class UserService {
     return User.findOne({ where: { email } })
   }
 
-  public static async getAll(query: QueryQuery): Promise<UserRepsonse[]> {
-    return User.findAll()
+  public static async getAll(request: QueryQuery): Promise<UserRepsonse[]> {
+    const query = request.query ? `%${request.query}%` : false
+    if (!query) {
+      return await User.findAll({ limit: 30 })
+    }
+    const operator = { [Op.iLike]: query }
+    return User.findAll({
+      limit: 30,
+      where: {
+        [Op.or]: [
+          { email: operator },
+          { firstName: operator },
+          { lastName: operator },
+        ],
+      },
+    })
   }
 
   public static async setRole(id: string, role: UserRole): Promise<boolean> {

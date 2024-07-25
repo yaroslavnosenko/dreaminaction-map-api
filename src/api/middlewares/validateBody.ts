@@ -11,7 +11,11 @@ export const validateBody = <T extends object>(type: Constructor<T>) => {
     res: Response,
     next: NextFunction
   ): Promise<void> => {
-    const errors = await validate(plainToInstance(type, req.body))
+    const whitelisted = plainToInstance(type, req.body, {
+      excludeExtraneousValues: true,
+    })
+    const errors = await validate(whitelisted)
+    req.body = whitelisted
     if (errors.length > 0) {
       res.status(400).send()
     } else {

@@ -29,13 +29,9 @@ router.get(
   validateParams(IdProp),
   validateAuth([UserRole.admin, UserRole.manager], isMe),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params
-      const user = await UserService.getOne(id)
-      return user ? res.status(200).json(user) : res.status(404).send()
-    } catch {
-      return res.status(500).send()
-    }
+    const { id } = req.params
+    const user = await UserService.getOne(id)
+    return user ? res.status(200).json(user) : res.status(404).send()
   }
 )
 
@@ -44,13 +40,9 @@ router.get(
   validateParams(IdProp),
   validateAuth([UserRole.admin, UserRole.manager], isMe),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params
-      const places = await PlaceService.getByOwner(id)
-      return res.status(200).json(places)
-    } catch {
-      return res.status(500).send()
-    }
+    const { id } = req.params
+    const places = await PlaceService.getByOwner(id)
+    return res.status(200).json(places)
   }
 )
 
@@ -60,17 +52,10 @@ router.put(
   validateBody(UserRoleRequest),
   validateAuth([UserRole.admin]),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params
-      const { role } = req.body as UserRoleRequest
-      const result = await UserService.setRole(id, role)
-      if (!result) {
-        return res.status(404).send()
-      }
-      return res.status(200).json({ id })
-    } catch (error) {
-      return res.status(500).send()
-    }
+    const { id } = req.params
+    const { role } = req.body as UserRoleRequest
+    const result = await UserService.setRole(id, role)
+    return result ? res.status(200).json({ id }) : res.status(404).send()
   }
 )
 
@@ -79,13 +64,9 @@ router.delete(
   validateAuth([UserRole.admin]),
   validateParams(IdProp),
   async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params
-      await UserService.delete(id)
-      return res.status(200).send()
-    } catch {
-      return res.status(500).send()
-    }
+    const { id } = req.params
+    await UserService.delete(id)
+    return res.status(200).send()
   }
 )
 

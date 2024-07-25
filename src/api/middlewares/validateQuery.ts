@@ -11,7 +11,11 @@ export const validateQuery = <T extends object>(type: Constructor<T>) => {
     res: Response,
     next: NextFunction
   ): Promise<void> => {
-    const errors = await validate(plainToInstance(type, req.query))
+    const whitelisted = plainToInstance(type, req.query, {
+      excludeExtraneousValues: true,
+    })
+    const errors = await validate(whitelisted)
+    req.query = whitelisted as { [key: string]: string }
     if (errors.length > 0) {
       res.status(400).send()
     } else {
