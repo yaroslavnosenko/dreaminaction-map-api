@@ -1,3 +1,4 @@
+import { plainToInstance } from 'class-transformer'
 import { Op } from 'sequelize'
 import { Accessibility } from '../../consts'
 import { Feature, Place, PlaceFeature, User } from '../../database'
@@ -31,7 +32,9 @@ export class PlaceService {
     result.unavailableFeatures = placeFeaturesQuery
       .filter((feat) => !feat.available)
       .map((feat) => feat.Feature!.dataValues)
-    return result
+    return plainToInstance(PlaceResponse, result, {
+      excludeExtraneousValues: true,
+    })
   }
 
   public static async getAll(request: FiltersQuery): Promise<PlaceResponse[]> {
@@ -63,7 +66,6 @@ export class PlaceService {
           ...whereArray,
         ],
       },
-      logging: true,
     })
   }
 
