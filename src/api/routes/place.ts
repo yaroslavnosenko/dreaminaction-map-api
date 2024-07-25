@@ -56,7 +56,9 @@ router.get(
   '/:id',
   validateParams(IdProp),
   async (req: Request, res: Response) => {
-    const withOwner = req.user?.role === UserRole.admin
+    const roleMaybe = req.user?.role
+    const withOwner =
+      roleMaybe === UserRole.admin || roleMaybe === UserRole.manager
     const { id } = req.params
     const place = await PlaceService.getOne(id, withOwner)
     return place ? res.status(200).json(place) : res.status(404).send()

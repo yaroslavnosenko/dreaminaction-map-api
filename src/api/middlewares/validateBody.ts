@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { plainToInstance } from 'class-transformer'
-import { validate } from 'class-validator'
+import { isArray, validate } from 'class-validator'
 
 type Constructor<T> = { new (...args: any[]): T }
 
@@ -11,6 +11,10 @@ export const validateBody = <T extends object>(type: Constructor<T>) => {
     res: Response,
     next: NextFunction
   ): Promise<void> => {
+    if (isArray(req.body)) {
+      res.status(400).send()
+      return
+    }
     const whitelisted = plainToInstance(type, req.body, {
       excludeExtraneousValues: true,
     })

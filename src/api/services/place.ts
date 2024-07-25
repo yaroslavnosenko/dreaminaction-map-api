@@ -1,5 +1,5 @@
 import { Accessibility } from '../../consts'
-import { Feature, Place, PlaceFeature } from '../../database'
+import { Feature, Place, PlaceFeature, User } from '../../database'
 import {
   BoundsQuery,
   FeaturesRequest,
@@ -13,7 +13,24 @@ export class PlaceService {
     id: string,
     withOwner?: boolean
   ): Promise<PlaceResponse | null> {
-    return Place.findByPk(id)
+    const query = await Place.findByPk(id)
+    if (!query) return null
+    const result: PlaceResponse = query.dataValues
+    if (withOwner) {
+      const user = await User.findByPk(query.userID)
+      result.owner = user!
+    }
+    const placeFeaturesQuery = await PlaceFeature.findAll({
+      where: { placeID: id },
+      include: Feature,
+    })
+    result.availableFeatures = placeFeaturesQuery
+      .filter((feat) => feat.available)
+      .map((feat) => feat.Feature!.dataValues)
+    result.unavailableFeatures = placeFeaturesQuery
+      .filter((feat) => !feat.available)
+      .map((feat) => feat.Feature!.dataValues)
+    return result
   }
 
   public static async getAll(query: FiltersQuery): Promise<PlaceResponse[]> {

@@ -17,6 +17,7 @@ export class PlaceFeature
   placeID!: string
   featureID!: string
   available!: boolean
+  Feature?: Feature
 }
 
 PlaceFeature.init(

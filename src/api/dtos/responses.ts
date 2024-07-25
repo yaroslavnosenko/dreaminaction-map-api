@@ -32,7 +32,6 @@ export class PlaceResponse {
 
   description?: string
   owner?: UserRepsonse
-  featuresCount?: number
   availableFeatures?: FeatureResponse[]
   unavailableFeatures?: FeatureResponse[]
 }
