@@ -56,7 +56,7 @@ To start the project in different environments, use the following scripts:
 
 ### Using Docker
 
-To run the project or tests in a containerized environment, use Docker Compose:
+To run the database in a containerized environment, use Docker Compose:
 
 1. Start the containers in detached mode:
    ```sh
