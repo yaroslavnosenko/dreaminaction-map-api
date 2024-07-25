@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import {
   IsArray,
   IsEnum,
@@ -32,14 +32,18 @@ export class FiltersQuery extends QueryQuery {
 export class BoundsQuery extends FiltersQuery {
   @IsNumber()
   @Expose()
+  @Type(() => Number)
   neLat: number
   @IsNumber()
   @Expose()
+  @Type(() => Number)
   neLng: number
   @IsNumber()
   @Expose()
+  @Type(() => Number)
   swLat: number
   @IsNumber()
   @Expose()
+  @Type(() => Number)
   swLng: number
 }

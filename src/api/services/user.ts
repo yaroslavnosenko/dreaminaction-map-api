@@ -32,7 +32,7 @@ export class UserService {
     }
     const operator = { [Op.iLike]: query }
     return User.findAll({
-      limit: 30,
+      limit: 100,
       where: {
         [Op.or]: [
           { email: operator },

@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { Accessibility } from '../../consts'
 import { Feature, Place, PlaceFeature, User } from '../../database'
 import {
@@ -33,14 +34,37 @@ export class PlaceService {
     return result
   }
 
-  public static async getAll(query: FiltersQuery): Promise<PlaceResponse[]> {
-    return Place.findAll()
+  public static async getAll(request: FiltersQuery): Promise<PlaceResponse[]> {
+    const whereArray = this.buildQuery(request)
+    return Place.findAll({
+      where: { [Op.and]: whereArray },
+    })
   }
 
   public static async getByBounds(
-    bounds: BoundsQuery
+    request: BoundsQuery
   ): Promise<PlaceResponse[]> {
-    return Place.findAll()
+    const { swLat, swLng, neLat, neLng, accessibilities, ...other } = request
+    const filteredAccessibilities = accessibilities
+      ? accessibilities.filter((item) => item !== Accessibility.unknown)
+      : undefined
+    const whereArray = this.buildQuery({
+      ...other,
+      accessibilities: filteredAccessibilities,
+    })
+    console.log(neLat)
+    return Place.findAll({
+      limit: 100,
+      where: {
+        [Op.and]: [
+          { lat: { [Op.between]: [swLat, neLat] } },
+          { lng: { [Op.between]: [swLng, neLng] } },
+          { accessibility: { [Op.not]: Accessibility.unknown } },
+          ...whereArray,
+        ],
+      },
+      logging: true,
+    })
   }
 
   public static async getByOwner(userID: string): Promise<PlaceResponse[]> {
@@ -116,5 +140,16 @@ export class PlaceService {
     await PlaceFeature.bulkCreate(newPlaceFeatures)
 
     return true
+  }
+
+  private static buildQuery(filters: FiltersQuery) {
+    const { categories, accessibilities } = filters
+    const query = filters.query ? `%${filters.query}%` : false
+    const whereArray = []
+    if (categories) whereArray.push({ category: { [Op.in]: categories } })
+    if (accessibilities && accessibilities.length > 0)
+      whereArray.push({ accessibility: { [Op.in]: accessibilities } })
+    if (query) whereArray.push({ name: { [Op.iLike]: query } })
+    return whereArray
   }
 }

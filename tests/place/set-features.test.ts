@@ -65,6 +65,20 @@ test('invalid body or params', async () => {
       features: [{ iinvalid: 'invalid' }],
     })
     .expect(400)
+
+  await request(app)
+    .put('/places/' + placeId + '/features')
+    .set({ Authorization: 'Bearer ' + admin.token })
+    .send({
+      features: [{ id: crypto.randomUUID(), available: true }],
+    })
+    .expect(400)
+
+  await request(app)
+    .put('/places/' + placeId + '/features')
+    .set({ Authorization: 'Bearer ' + admin.token })
+    .send([])
+    .expect(400)
 })
 
 test('user set features', async () => {
