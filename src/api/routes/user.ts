@@ -1,6 +1,7 @@
-import { Request, Response, Router } from 'express'
+import { Router } from 'express'
 
 import { UserRole } from '../../consts'
+import { UserController } from '../controllers'
 import { IdProp, QueryQuery, UserRoleRequest } from '../dtos'
 import {
   validateAuth,
@@ -8,7 +9,6 @@ import {
   validateParams,
   validateQuery,
 } from '../middlewares'
-import { PlaceService, UserService } from '../services'
 import { isMe } from './validations'
 
 const router = Router()
@@ -17,33 +17,21 @@ router.get(
   '/',
   validateQuery(QueryQuery),
   validateAuth([UserRole.admin, UserRole.manager]),
-  async (req: Request, res: Response) => {
-    const query = req.query as QueryQuery
-    const users = await UserService.getAll(query)
-    return res.status(200).json(users)
-  }
+  UserController.getUsers
 )
 
 router.get(
   '/:id',
   validateParams(IdProp),
   validateAuth([UserRole.admin, UserRole.manager], isMe),
-  async (req: Request, res: Response) => {
-    const { id } = req.params
-    const user = await UserService.getOne(id)
-    return user ? res.status(200).json(user) : res.status(404).send()
-  }
+  UserController.getUser
 )
 
 router.get(
   '/:id/places',
   validateParams(IdProp),
   validateAuth([UserRole.admin, UserRole.manager], isMe),
-  async (req: Request, res: Response) => {
-    const { id } = req.params
-    const places = await PlaceService.getByOwner(id)
-    return res.status(200).json(places)
-  }
+  UserController.getUserPlaces
 )
 
 router.put(
@@ -51,23 +39,14 @@ router.put(
   validateParams(IdProp),
   validateBody(UserRoleRequest),
   validateAuth([UserRole.admin]),
-  async (req: Request, res: Response) => {
-    const { id } = req.params
-    const { role } = req.body as UserRoleRequest
-    const result = await UserService.setRole(id, role)
-    return result ? res.status(200).json({ id }) : res.status(404).send()
-  }
+  UserController.setRole
 )
 
 router.delete(
   '/:id',
   validateAuth([UserRole.admin]),
   validateParams(IdProp),
-  async (req: Request, res: Response) => {
-    const { id } = req.params
-    await UserService.delete(id)
-    return res.status(200).send()
-  }
+  UserController.deleteUser
 )
 
 export const usersRouter = router
