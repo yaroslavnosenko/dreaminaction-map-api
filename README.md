@@ -29,19 +29,17 @@ Follow these instructions to set up and run the project locally.
 
 ### Running the Project
 
-To start the project in different environments, use the following scripts:
+#### Database
 
-- **Build**: Compiles TypeScript to JavaScript.
+To run the database in a containerized environment, use Docker Compose:
 
-  ```sh
-  npm run build
-  ```
+1. Start the containers in detached mode:
+   ```sh
+   docker compose up -d
+   ```
 
-- **Start**: Runs the compiled code.
+2. To start the project, use the following scripts:
 
-  ```sh
-  npm start
-  ```
 
 - **Development**: Starts the development server with hot-reloading using Nodemon.
 
@@ -54,14 +52,7 @@ To start the project in different environments, use the following scripts:
   npm test
   ```
 
-### Using Docker
 
-To run the database in a containerized environment, use Docker Compose:
-
-1. Start the containers in detached mode:
-   ```sh
-   docker compose up -d
-   ```
 
 ## Scripts
 
