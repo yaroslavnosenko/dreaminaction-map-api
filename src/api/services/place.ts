@@ -26,12 +26,19 @@ export class PlaceService {
       where: { placeID: id },
       include: Feature,
     })
-    result.availableFeatures = placeFeaturesQuery
-      .filter((feat) => feat.available)
-      .map((feat) => feat.Feature!.dataValues)
-    result.unavailableFeatures = placeFeaturesQuery
-      .filter((feat) => !feat.available)
-      .map((feat) => feat.Feature!.dataValues)
+
+    result.availableFeatures = []
+    result.unavailableFeatures = []
+
+    for (const feature of placeFeaturesQuery) {
+      const feat = feature.Feature!.dataValues
+      if (feature.available) {
+        result.availableFeatures.push(feat)
+      } else {
+        result.unavailableFeatures.push(feat)
+      }
+    }
+
     return plainToInstance(PlaceResponse, result, {
       excludeExtraneousValues: true,
     })
