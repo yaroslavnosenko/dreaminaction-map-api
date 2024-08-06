@@ -6,6 +6,9 @@ import { usersRouter } from './user'
 
 const router = Router()
 
+router.get('/', (_, res) => {
+  res.json({ status: 'ok' })
+})
 router.use('/auth', authRouter)
 router.use('/users', usersRouter)
 router.use('/places', placesRouter)
