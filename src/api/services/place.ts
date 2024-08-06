@@ -157,7 +157,7 @@ export class PlaceService {
     if (categories) whereArray.push({ category: { [Op.in]: categories } })
     if (accessibilities && accessibilities.length > 0)
       whereArray.push({ accessibility: { [Op.in]: accessibilities } })
-    if (query) whereArray.push({ name: { [Op.iLike]: query } })
+    if (query) whereArray.push({ name: { [Op.like]: query } })
     return whereArray
   }
 }

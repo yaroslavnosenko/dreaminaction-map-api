@@ -1,12 +1,10 @@
-version: '3.1'
-
 services:
   database:
     container_name: database
-    image: postgres:latest
+    image: mariadb:10.6.18
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: dreaminaction
+      MARIADB_ROOT_USER: root
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: dreaminaction
     ports:
-      - '5432:5432'
+      - '3306:3306'

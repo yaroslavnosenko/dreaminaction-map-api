@@ -30,7 +30,7 @@ export class UserService {
     if (!query) {
       return await User.findAll({ limit: 30 })
     }
-    const operator = { [Op.iLike]: query }
+    const operator = { [Op.like]: query }
     return User.findAll({
       limit: 100,
       where: {

@@ -11,7 +11,7 @@ let place1Id: string
 let place2Id: string
 
 const place1 = {
-  name: 'FOOD',
+  name: 'Food',
   category: Category.food,
   address: 'MAIN ST.',
   lat: 2.5,
@@ -19,7 +19,7 @@ const place1 = {
 }
 
 const place2 = {
-  name: 'HOTEL',
+  name: 'Hotel',
   category: Category.hotels,
   address: 'MAIN ST.',
   lat: 2,
@@ -70,7 +70,13 @@ test('admin get one place', async () => {
 
 test('admin queries', async () => {
   let res = await request(app)
-    .get('/places?query=ho')
+    .get('/places')
+    .set({ Authorization: 'Bearer ' + admin.token })
+    .expect(200)
+  expect(res.body.length).toEqual(2)
+
+  res = await request(app)
+    .get('/places?query=Ho')
     .set({ Authorization: 'Bearer ' + admin.token })
     .expect(200)
   expect(res.body.length).toEqual(1)
