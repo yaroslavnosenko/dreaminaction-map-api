@@ -1,5 +1,5 @@
 export const appConfigs = {
-  port: process.env.PORT || 8080,
+  port: process.env.PORT || 3001,
   adminEmail: process.env.ADMIN_EMAIL || 'admin@mail.mock',
   jwtSecret: process.env.JWT_SECRET || 'jwt',
   database: {

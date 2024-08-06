@@ -5,8 +5,6 @@ import { app } from './app'
 import { appConfigs } from './consts'
 import { connection, migrationsUp } from './database'
 
-console.log(process.env.DATABASE_HOST)
-
 const bootstrap = async (): Promise<void> => {
   try {
     await connection.authenticate()
