@@ -1,5 +1,8 @@
 import dotenv from 'dotenv'
-dotenv.config()
+import path from 'path'
+dotenv.config({ path: path.resolve(__dirname, '.env') })
+
+console.log(process.env.DATABASE_HOST)
 
 import { app } from './app'
 import { appConfigs } from './consts'
