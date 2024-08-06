@@ -1,10 +1,11 @@
 import dotenv from 'dotenv'
+dotenv.config()
 
 import { app } from './app'
 import { appConfigs } from './consts'
 import { connection, migrationsUp } from './database'
 
-dotenv.config()
+console.log(process.env.DATABASE_HOST)
 
 const bootstrap = async (): Promise<void> => {
   try {

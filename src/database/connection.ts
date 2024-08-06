@@ -8,5 +8,6 @@ export const connection = new Sequelize({
   username: appConfigs.database.user,
   password: appConfigs.database.password,
   database: appConfigs.database.name,
+  port: parseInt(appConfigs.database.port),
   logging: false,
 })
