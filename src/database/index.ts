@@ -1,3 +1,3 @@
 export * from './connection'
-export * from './migrations'
+export * from './ilike'
 export * from './models'

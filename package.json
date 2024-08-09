@@ -20,9 +20,9 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.3.1",
+    "mysql": "^2.18.1",
     "reflect-metadata": "^0.2.2",
-    "sequelize": "^6.37.3",
-    "umzug": "^3.8.1"
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -14,6 +14,6 @@ export const auth = async (req: Request, _: Response, next: NextFunction) => {
   if (!payload) {
     return next()
   }
-  req.user = await User.findByPk(payload.uid)
+  req.user = await User.findOneBy({ id: payload.uid })
   next()
 }

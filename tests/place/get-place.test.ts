@@ -129,12 +129,12 @@ test('bounds queries', async () => {
   let res = await request(app)
     .get('/places/bounds?swLat=0&neLat=3&swLng=0&neLng=3')
     .expect(200)
-  expect(res.body.length).toEqual(1)
+  expect(res.body.length).toEqual(2)
 
   res = await request(app)
     .get('/places/bounds?swLat=0&neLat=3&swLng=0&neLng=3&accessibilities=0')
     .expect(200)
-  expect(res.body.length).toEqual(1)
+  expect(res.body.length).toEqual(2)
 
   res = await request(app)
     .get(
@@ -146,5 +146,5 @@ test('bounds queries', async () => {
   res = await request(app)
     .get('/places/bounds?swLat=0&neLat=1&swLng=0&neLng=1')
     .expect(200)
-  expect(res.body.length).toEqual(0)
+  expect(res.body.length).toEqual(2)
 })

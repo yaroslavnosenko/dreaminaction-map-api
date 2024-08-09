@@ -1,18 +1,11 @@
-import { connection, migrationsDown, migrationsUp } from '../src/database'
-
-beforeAll(async () => {
-  await connection.authenticate()
-  await migrationsDown()
-})
+import { connection } from '../src/database'
 
 beforeEach(async () => {
-  await migrationsUp()
+  await connection.initialize()
+  await connection.dropDatabase()
+  await connection.synchronize()
 })
 
 afterEach(async () => {
-  await migrationsDown()
-})
-
-afterAll(async () => {
-  await connection.close()
+  await connection.destroy()
 })

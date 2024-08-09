@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
-import { Op } from 'sequelize'
+import { In } from 'typeorm'
 import { Accessibility } from '../../consts'
-import { Feature, Place, PlaceFeature, User } from '../../database'
+import { Feature, ILike, Place, PlaceFeature, User } from '../../database'
 import {
   BoundsQuery,
   FeaturesRequest,
@@ -15,79 +15,65 @@ export class PlaceService {
     id: string,
     withOwner?: boolean
   ): Promise<PlaceResponse | null> {
-    const query = await Place.findByPk(id)
+    const query = await Place.findOne({
+      where: { id },
+      relations: { placeFeature: { feature: true } },
+    })
     if (!query) return null
-    const result: PlaceResponse = query.dataValues
+    const { placeFeature, userId, ...data } = query
+    let result: PlaceResponse = { ...data }
     if (withOwner) {
-      const user = await User.findByPk(query.userID)
+      const user = await User.findOneBy({ id: userId })
       result.owner = user!
     }
-    const placeFeaturesQuery = await PlaceFeature.findAll({
-      where: { placeID: id },
-      include: Feature,
-    })
-
     result.availableFeatures = []
     result.unavailableFeatures = []
-
-    for (const feature of placeFeaturesQuery) {
-      const feat = feature.Feature!.dataValues
-      if (feature.available) {
+    for (const featureMap of placeFeature) {
+      const feat = featureMap.feature
+      if (featureMap.available) {
         result.availableFeatures.push(feat)
       } else {
         result.unavailableFeatures.push(feat)
       }
     }
-
     return plainToInstance(PlaceResponse, result, {
       excludeExtraneousValues: true,
     })
   }
 
   public static async getAll(request: FiltersQuery): Promise<PlaceResponse[]> {
-    const whereArray = this.buildQuery(request)
-    return Place.findAll({
-      where: { [Op.and]: whereArray },
-    })
+    const where = this.buildQuery(request)
+    return await Place.find({ where, take: 50 })
   }
 
   public static async getByBounds(
     request: BoundsQuery
   ): Promise<PlaceResponse[]> {
     const { swLat, swLng, neLat, neLng, accessibilities, ...other } = request
+    // TODO bounds
     const filteredAccessibilities = accessibilities
       ? accessibilities.filter((item) => item !== Accessibility.unknown)
       : undefined
-    const whereArray = this.buildQuery({
+    const where = this.buildQuery({
       ...other,
       accessibilities: filteredAccessibilities,
     })
-    return Place.findAll({
-      limit: 100,
-      where: {
-        [Op.and]: [
-          { lat: { [Op.between]: [swLat, neLat] } },
-          { lng: { [Op.between]: [swLng, neLng] } },
-          { accessibility: { [Op.not]: Accessibility.unknown } },
-          ...whereArray,
-        ],
-      },
-    })
+    return Place.find({ take: 50, where })
   }
 
-  public static async getByOwner(userID: string): Promise<PlaceResponse[]> {
-    return Place.findAll({ where: { userID } })
+  public static async getByOwner(userId: string): Promise<PlaceResponse[]> {
+    return Place.findBy({ userId })
   }
 
   public static async create(
-    userID: string,
+    userId: string,
     place: PlaceRequest
   ): Promise<IdResponse> {
     const { id } = await Place.create({
-      userID,
+      userId,
       accessibility: Accessibility.unknown,
       ...place,
-    })
+    }).save()
     return { id }
   }
 
@@ -95,18 +81,24 @@ export class PlaceService {
     id: string,
     place: PlaceRequest
   ): Promise<boolean> {
-    const [count] = await Place.update({ ...place }, { where: { id } })
-    return count === 1
+    const dbPlace = await Place.findOneBy({ id })
+    if (!dbPlace) return false
+    const updated = Place.create({ ...dbPlace, ...place })
+    await updated.save()
+    return true
   }
 
   public static async delete(id: string): Promise<void> {
-    await Place.destroy({ where: { id } })
+    await Place.delete(id)
   }
 
-  public static async setOwner(id: string, userID: string): Promise<boolean> {
+  public static async setOwner(id: string, userId: string): Promise<boolean> {
     try {
-      const [count] = await Place.update({ userID }, { where: { id } })
-      return count === 1
+      const place = await Place.findOneBy({ id })
+      if (!place) return false
+      place.userId = userId
+      await place.save()
+      return true
     } catch {
       return false
     }
@@ -116,48 +108,53 @@ export class PlaceService {
     id: string,
     accessibility: Accessibility
   ): Promise<boolean> {
-    const [count] = await Place.update({ accessibility }, { where: { id } })
-    return count === 1
+    const place = await Place.findOneBy({ id })
+    if (!place) return false
+    place.accessibility = accessibility
+    await place.save()
+    return true
   }
 
   static async setFeatures(
     id: string,
     { features }: FeaturesRequest
   ): Promise<boolean | null> {
-    const place = await Place.findByPk(id)
+    const place = await Place.findOneBy({ id })
     if (!place) return null
 
     const newIds = features.map((feat) => feat.id)
     if (newIds.length === 0) {
-      await PlaceFeature.destroy({ where: { placeID: id } })
+      await PlaceFeature.delete({ placeId: id })
       return true
     }
 
-    const dbFeatures = await Feature.findAll({ where: { id: newIds } })
+    const dbFeatures = await Feature.findBy({ id: In(newIds) })
     if (dbFeatures.length !== newIds.length) {
       return false
     }
 
-    await PlaceFeature.destroy({ where: { placeID: id } })
+    await PlaceFeature.delete({ placeId: id })
 
-    const newPlaceFeatures = features.map((feat) => ({
-      placeID: id,
-      featureID: feat.id,
-      available: feat.available,
-    }))
-    await PlaceFeature.bulkCreate(newPlaceFeatures)
-
+    await PlaceFeature.save(
+      features.map((feat) =>
+        PlaceFeature.create({
+          placeId: id,
+          featureId: feat.id,
+          available: feat.available,
+        })
+      )
+    )
     return true
   }
 
   private static buildQuery(filters: FiltersQuery) {
     const { categories, accessibilities } = filters
-    const query = filters.query ? `%${filters.query}%` : false
-    const whereArray = []
-    if (categories) whereArray.push({ category: { [Op.in]: categories } })
+    const query = filters.query ? filters.query : false
+    const where = {} as any
+    if (categories) where.category = In(categories)
     if (accessibilities && accessibilities.length > 0)
-      whereArray.push({ accessibility: { [Op.in]: accessibilities } })
-    if (query) whereArray.push({ name: { [Op.like]: query } })
-    return whereArray
+      where.accessibility = In(accessibilities)
+    if (query) where.name = ILike(query)
+    return where
   }
 }

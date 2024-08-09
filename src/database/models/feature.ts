@@ -1,34 +1,9 @@
-import { DataTypes, Model, Optional } from 'sequelize'
+import { Column, Entity } from 'typeorm'
 
-import { connection } from '../connection'
+import { Base } from './base'
 
-export interface FeatureAttributes {
-  id: string
+@Entity()
+export class Feature extends Base {
+  @Column('varchar')
   name: string
 }
-
-export interface FeatureInput extends Optional<FeatureAttributes, 'id'> {}
-
-export class Feature
-  extends Model<FeatureAttributes, FeatureInput>
-  implements FeatureAttributes
-{
-  id!: string
-  name!: string
-}
-
-Feature.init(
-  {
-    id: { type: DataTypes.UUID, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false },
-  },
-  {
-    timestamps: false,
-    sequelize: connection,
-    tableName: 'features',
-  }
-)
-
-Feature.beforeCreate((entity) => {
-  entity.id = crypto.randomUUID()
-})

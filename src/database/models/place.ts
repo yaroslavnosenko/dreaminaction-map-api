@@ -1,60 +1,41 @@
-import { DataTypes, Model, Optional } from 'sequelize'
-
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm'
 import { Accessibility, Category } from '../../consts'
-import { connection } from '../connection'
+import { Base } from './base'
+import { PlaceFeature } from './placeFeature'
 import { User } from './user'
 
-export interface PlaceAttributes {
-  id: string
+@Entity()
+export class Place extends Base {
+  @Column('varchar')
   name: string
+
+  @Column('varchar')
   address: string
+
+  @Column('varchar')
   category: Category
+
+  @Column('int')
   accessibility: Accessibility
+
+  @Column('float')
   lat: number
+
+  @Column('float')
   lng: number
+
+  @Column('varchar', { nullable: true })
   description: string
-  userID: string
+
+  @ManyToOne(() => User, (user) => user.places, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  user: Promise<User>
+  @Column('varchar', { nullable: false })
+  userId: string
+
+  @OneToMany(() => PlaceFeature, (placeFeature) => placeFeature.place)
+  placeFeature: PlaceFeature[]
 }
-
-export interface PlaceInput
-  extends Optional<PlaceAttributes, 'id' | 'description'> {}
-
-export class Place
-  extends Model<PlaceAttributes, PlaceInput>
-  implements PlaceAttributes
-{
-  id!: string
-  name!: string
-  address!: string
-  category!: Category
-  accessibility!: Accessibility
-  lat!: number
-  lng!: number
-  description!: string
-  userID!: string
-}
-
-Place.init(
-  {
-    id: { type: DataTypes.UUID, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false },
-    category: { type: DataTypes.STRING, allowNull: false },
-    address: { type: DataTypes.STRING, allowNull: false },
-    accessibility: { type: DataTypes.INTEGER, allowNull: false },
-    lat: { type: DataTypes.DOUBLE, allowNull: false },
-    lng: { type: DataTypes.DOUBLE, allowNull: false },
-    description: { type: DataTypes.STRING },
-    userID: { type: DataTypes.UUID, allowNull: false },
-  },
-  {
-    timestamps: false,
-    sequelize: connection,
-    tableName: 'places',
-  }
-)
-
-Place.beforeCreate((entity) => {
-  entity.id = crypto.randomUUID()
-})
-
-Place.belongsTo(User, { foreignKey: 'userID' })

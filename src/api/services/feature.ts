@@ -4,11 +4,11 @@ import { FeatureResponse, IdResponse } from '../dtos/responses'
 
 export class FeatureService {
   public static async getAll(): Promise<FeatureResponse[]> {
-    return await Feature.findAll()
+    return await Feature.find()
   }
 
   public static async create(feature: FeatureRequest): Promise<IdResponse> {
-    const { id } = await Feature.create({ ...feature })
+    const { id } = await Feature.create({ ...feature }).save()
     return { id }
   }
 
@@ -16,11 +16,14 @@ export class FeatureService {
     id: string,
     feature: FeatureRequest
   ): Promise<boolean> {
-    const [count] = await Feature.update({ ...feature }, { where: { id } })
-    return count === 1
+    const feat = await Feature.findOneBy({ id })
+    if (!feat) return false
+    feat.name = feature.name
+    await feat.save()
+    return true
   }
 
   public static async delete(id: string): Promise<void> {
-    await Feature.destroy({ where: { id } })
+    await Feature.delete(id)
   }
 }

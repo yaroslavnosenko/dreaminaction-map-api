@@ -7,9 +7,9 @@ export class AuthService {
   public static async validate3dPartyToken(
     provider: 'google' | 'facebook',
     token: string
-  ): Promise<{ email: string; firstName: string; lastName: string }> {
+  ): Promise<{ email: string }> {
     // TODO replace by real provider validation
-    return { email: token + '@mail.mock', firstName: 'User', lastName: 'Name' }
+    return { email: token + '@mail.mock' }
   }
 
   public static createToken(userId: string): TokenResponse {

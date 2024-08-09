@@ -16,10 +16,6 @@ export class UserRepsonse {
   email: string
   @Expose()
   role: UserRole
-  @Expose()
-  firstName?: string
-  @Expose()
-  lastName?: string
 }
 
 export class FeatureResponse {
