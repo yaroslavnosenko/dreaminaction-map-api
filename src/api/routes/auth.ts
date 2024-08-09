@@ -1,11 +1,17 @@
 import { Router } from 'express'
 
 import { AuthController } from '../controllers'
-import { TokenRequest } from '../dtos'
+import { SendOtpRequest, ValidateOtpRequest } from '../dtos'
 import { validateBody } from '../middlewares'
 
 const router = Router()
 
-router.post('/', validateBody(TokenRequest), AuthController.auth)
+router.post('/otp', validateBody(SendOtpRequest), AuthController.sendOtp)
+
+router.post(
+  '/otp/validate',
+  validateBody(ValidateOtpRequest),
+  AuthController.validateOtp
+)
 
 export const authRouter = router

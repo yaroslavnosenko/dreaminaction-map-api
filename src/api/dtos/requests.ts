@@ -1,11 +1,13 @@
 import {
   IsArray,
   IsBoolean,
+  IsEmail,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Length,
   MaxLength,
   MinLength,
   ValidateNested,
@@ -14,14 +16,21 @@ import {
 import { Expose, Type } from 'class-transformer'
 import { Accessibility, Category, UserRole } from '../../consts'
 
-export class TokenRequest {
-  @IsEnum(['google', 'facebook'])
+export class SendOtpRequest {
+  @IsEmail()
   @Expose()
-  provider: 'google' | 'facebook'
+  email: string
+}
+
+export class ValidateOtpRequest {
+  @IsEmail()
+  @Expose()
+  email: string
 
   @IsString()
   @Expose()
-  token: string
+  @Length(6)
+  otp: string
 }
 
 export class UserRoleRequest {

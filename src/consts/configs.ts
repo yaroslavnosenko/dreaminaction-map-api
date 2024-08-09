@@ -9,4 +9,9 @@ export const appConfigs = {
     password: process.env.DATABASE_PASSWORD || 'root',
     name: process.env.DATABASE_NAME || 'dreaminaction',
   },
+  smtp: {
+    host: process.env.SMTP_HOST,
+    user: process.env.SMTP_USER,
+    password: process.env.SMTP_PASSWORD,
+  },
 }

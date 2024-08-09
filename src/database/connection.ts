@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm'
 
 import { appConfigs } from '../consts'
-import { Feature, Place, PlaceFeature, User } from './models'
+import { Feature, Otp, Place, PlaceFeature, User } from './models'
 
 export const connection = new DataSource({
   type: 'mariadb',
@@ -12,5 +12,5 @@ export const connection = new DataSource({
   port: parseInt(appConfigs.database.port),
   logging: false,
   synchronize: false,
-  entities: [User, Place, Feature, PlaceFeature],
+  entities: [User, Place, Feature, PlaceFeature, Otp],
 })

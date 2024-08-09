@@ -1,15 +1,33 @@
 import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
 
+import { Raw } from 'typeorm'
 import { appConfigs } from '../../consts'
+import { Otp } from '../../database'
 import { TokenResponse } from '../dtos/responses'
 
 export class AuthService {
-  public static async validate3dPartyToken(
-    provider: 'google' | 'facebook',
-    token: string
-  ): Promise<{ email: string }> {
-    // TODO replace by real provider validation
-    return { email: token + '@mail.mock' }
+  public static async validateOtp(
+    email: string,
+    otp: string
+  ): Promise<boolean> {
+    await Otp.delete({
+      createdAt: Raw((alias) => `${alias} < NOW() - INTERVAL 90 SECOND`),
+    })
+    const dbOtp = await Otp.findOneBy({ email })
+    if (!dbOtp || dbOtp.otp !== otp) {
+      return false
+    }
+    await dbOtp.remove()
+    return true
+  }
+
+  public static async sendOtp(email: string): Promise<boolean> {
+    await Otp.delete({ email })
+    const otp = this.generateOTP()
+    await Otp.create({ email, otp }).save()
+    await this.sendEmail(email, otp)
+    return true
   }
 
   public static createToken(userId: string): TokenResponse {
@@ -27,5 +45,40 @@ export class AuthService {
     } catch {
       return null
     }
+  }
+
+  private static async sendEmail(email: string, otp: string): Promise<boolean> {
+    if (!appConfigs.smtp.host) {
+      return true
+    }
+    try {
+      const transporter = nodemailer.createTransport({
+        host: 'mail.dreaminaction.info',
+        port: 465,
+        secure: true,
+        auth: {
+          user: 'no-reply@dreaminaction.info',
+          pass: 'BFrn46ugXu32I',
+        },
+      })
+
+      await transporter.sendMail({
+        from: '"Dream In Action" <no-reply@dreaminaction.info>',
+        to: email,
+        subject: 'OTP Code',
+        text: 'Your code is ' + otp,
+      })
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  private static generateOTP(): string {
+    if (!appConfigs.smtp.host) {
+      return '000000'
+    }
+    const otp = Math.floor(100000 + Math.random() * 900000)
+    return otp.toString()
   }
 }

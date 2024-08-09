@@ -4,7 +4,7 @@ import { UserRole } from '../src/consts'
 import { auth } from './_auth'
 
 test('/auth', async () => {
-  await request(app).post('/auth').expect(400)
+  await request(app).post('/auth/otp').expect(400)
   await auth(UserRole.admin)
 })
 
