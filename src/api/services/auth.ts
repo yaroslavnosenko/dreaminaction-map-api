@@ -53,17 +53,17 @@ export class AuthService {
     }
     try {
       const transporter = nodemailer.createTransport({
-        host: 'mail.dreaminaction.info',
+        host: appConfigs.smtp.host,
         port: 465,
         secure: true,
         auth: {
-          user: 'no-reply@dreaminaction.info',
-          pass: 'BFrn46ugXu32I',
+          user: appConfigs.smtp.user,
+          pass: appConfigs.smtp.password,
         },
       })
 
       await transporter.sendMail({
-        from: '"Dream In Action" <no-reply@dreaminaction.info>',
+        from: '"Dream In Action" <' + appConfigs.smtp.user + '>',
         to: email,
         subject: 'OTP Code',
         text: 'Your code is ' + otp,
