@@ -7,7 +7,7 @@ import { validateAuth, validateBody } from '../middlewares'
 
 const router = Router()
 
-router.post(
+router.get(
   '/me',
   validateAuth([UserRole.admin, UserRole.manager]),
   AuthController.me

@@ -33,20 +33,16 @@ export class ValidateOtpRequest {
   otp: string
 }
 
-export class UserRequest {
-  @IsEmail()
-  @Expose()
-  email: string
-
+export class UserRoleRequest {
   @IsEnum(UserRole)
   @Expose()
   role: UserRole
 }
 
-export class UserRoleRequest {
-  @IsEnum(UserRole)
+export class UserRequest extends UserRoleRequest {
+  @IsEmail()
   @Expose()
-  role: UserRole
+  email: string
 }
 
 export class FeatureRequest {

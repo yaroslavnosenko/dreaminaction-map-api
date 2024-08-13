@@ -6,9 +6,6 @@ import { AuthService, UserService } from '../services'
 
 export class AuthController {
   public static async me(req: Request, res: Response) {
-    if (!req.user) {
-      return res.status(403).send()
-    }
     return res.status(200).json(req.user)
   }
 

@@ -1,12 +1,12 @@
 import request from 'supertest'
 
 import { app } from '../../src/app'
-import { Category, UserRole } from '../../src/consts'
+import { Accessibility, Category, UserRole } from '../../src/consts'
 
 import { auth } from '../_auth'
 
 let admin: { token: string; id: string }
-let user: { token: string; id: string }
+let manager: { token: string; id: string }
 
 let placeId: string
 let feat1Id: string
@@ -15,6 +15,7 @@ let feat2Id: string
 const place = {
   name: 'PLACE',
   category: Category.food,
+  accessibility: Accessibility.unknown,
   address: 'MAIN ST.',
   lat: 0,
   lng: 0,
@@ -22,7 +23,7 @@ const place = {
 
 beforeEach(async () => {
   admin = await auth(UserRole.admin)
-  user = await auth(UserRole.user)
+  manager = await auth(UserRole.manager)
 
   let res = await request(app)
     .post('/places')
@@ -81,10 +82,9 @@ test('invalid body or params', async () => {
     .expect(400)
 })
 
-test('user set features', async () => {
+test('no auth set features', async () => {
   await request(app)
     .put('/places/' + placeId + '/features')
-    .set({ Authorization: 'Bearer ' + user.token })
     .send({
       features: [
         { id: feat1Id, available: true },

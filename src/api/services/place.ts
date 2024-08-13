@@ -39,9 +39,7 @@ export class PlaceService {
   }
 
   public static async create(place: PlaceRequest): Promise<IdResponse> {
-    const { id } = await Place.create({
-      ...place,
-    }).save()
+    const { id } = await Place.create({ ...place }).save()
     return { id }
   }
 

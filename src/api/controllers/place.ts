@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 
+import { Accessibility } from '../../consts'
 import { FeaturesRequest, FiltersQuery, PlaceRequest } from '../dtos'
 import { PlaceService } from '../services'
 
@@ -19,7 +20,10 @@ export class PlaceController {
   public static async getMapPlaces(req: Request, res: Response) {
     const query = req.query as FiltersQuery
     const places = await PlaceService.getAll(query)
-    res.status(200).json(places)
+    const filtered = places.filter(
+      (place) => place.accessibility !== Accessibility.unknown
+    )
+    res.status(200).json(filtered)
   }
 
   public static async createPlace(req: Request, res: Response) {

@@ -14,7 +14,7 @@ const invalidFeature = { not_name: 'INVALID' }
 
 beforeEach(async () => {
   admin = await auth(UserRole.admin)
-  user = await auth(UserRole.user)
+  user = await auth(UserRole.manager)
 
   const res = await request(app)
     .post('/features')
