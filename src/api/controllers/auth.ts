@@ -14,10 +14,12 @@ export class AuthController {
 
   public static async sendOtp(req: Request, res: Response) {
     const { email } = req.body as SendOtpRequest
+    const user = await UserService.getOneByEmail(email)
 
-    if (email !== appConfigs.adminEmail) {
-      const user = await UserService.getOneByEmail(email)
-      if (!user) {
+    if (!user) {
+      if (email === appConfigs.adminEmail) {
+        await UserService.create(email, UserRole.admin)
+      } else {
         return res.status(400).send()
       }
     }
@@ -33,13 +35,6 @@ export class AuthController {
       return res.status(400).send()
     }
     let user = await UserService.getOneByEmail(email)
-    if (!user) {
-      const isAdmin = appConfigs.adminEmail === email
-      user = await UserService.create(
-        email,
-        isAdmin ? UserRole.admin : UserRole.manager
-      )
-    }
-    res.status(200).json(AuthService.createToken(user.id))
+    res.status(200).json(AuthService.createToken(user!.id))
   }
 }

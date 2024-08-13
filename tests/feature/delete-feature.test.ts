@@ -6,12 +6,12 @@ import { UserRole } from '../../src/consts'
 import { auth } from '../_auth'
 
 let admin: { token: string; id: string }
-let user: { token: string; id: string }
+let manager: { token: string; id: string }
 let featureId: string
 
 beforeEach(async () => {
   admin = await auth(UserRole.admin)
-  user = await auth(UserRole.user)
+  manager = await auth(UserRole.manager)
   const feature = { name: 'FEATURE' }
   const res = await request(app)
     .post('/features')
@@ -44,7 +44,7 @@ test('user delete feature', async () => {
 
   await request(app)
     .delete('/features/' + featureId)
-    .set({ Authorization: 'Bearer ' + user.token })
+    .set({ Authorization: 'Bearer ' + manager.token })
     .expect(403)
 
   res = await request(app).get('/features').expect(200)

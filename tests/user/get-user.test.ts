@@ -13,28 +13,37 @@ beforeEach(async () => {
   manager = await auth(UserRole.manager)
 })
 
-test('admin delete user', async () => {
-  await request(app)
-    .delete('/users/' + manager.id)
+test('admin get users', async () => {
+  let res = await request(app)
+    .get('/users')
     .set({ Authorization: 'Bearer ' + admin.token })
     .expect(200)
-  await request(app)
-    .get('/users/' + manager.id)
-    .set({ Authorization: 'Bearer ' + admin.token })
-    .expect(404)
+  expect(res.body.length).toEqual(2)
 })
 
-test('manager or no auth delete user', async () => {
-  await request(app)
-    .delete('/users/' + admin.id)
-    .set({ Authorization: 'Bearer ' + manager.token })
-    .expect(403)
-  await request(app)
-    .delete('/users/' + admin.id)
-    .expect(403)
-  const res = await request(app)
-    .get('/users/' + admin.id)
+test('admin get one user', async () => {
+  let res = await request(app)
+    .get('/users/' + manager.id)
     .set({ Authorization: 'Bearer ' + admin.token })
     .expect(200)
-  expect(res.body.id).toEqual(admin.id)
+  expect(res.body.id).toEqual(manager.id)
+})
+
+test('manager get users/users', async () => {
+  await request(app)
+    .get('/users')
+    .set({ Authorization: 'Bearer ' + manager.token })
+    .expect(403)
+
+  await request(app)
+    .get('/users/' + manager.id)
+    .set({ Authorization: 'Bearer ' + manager.token })
+    .expect(403)
+})
+
+test('no auth get users/users', async () => {
+  await request(app).get('/users').expect(403)
+  await request(app)
+    .get('/users/' + manager.id)
+    .expect(403)
 })

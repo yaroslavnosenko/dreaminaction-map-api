@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import { UserRole } from '../../consts'
 import { UserController } from '../controllers'
-import { IdProp, QueryQuery, UserRoleRequest } from '../dtos'
+import { IdProp, QueryQuery, UserRequest, UserRoleRequest } from '../dtos'
 import {
   validateAuth,
   validateBody,
@@ -28,7 +28,7 @@ router.get(
 
 router.post(
   '/',
-  validateParams(IdProp),
+  validateBody(UserRequest),
   validateAuth([UserRole.admin]),
   UserController.createUser
 )

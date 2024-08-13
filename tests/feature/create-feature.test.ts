@@ -6,13 +6,13 @@ import { UserRole } from '../../src/consts'
 import { auth } from '../_auth'
 
 let admin: { token: string; id: string }
-let user: { token: string; id: string }
+let manager: { token: string; id: string }
 const feature = { name: 'FEATURE' }
 const invalidFeature = { not_name: 'INVALID' }
 
 beforeEach(async () => {
   admin = await auth(UserRole.admin)
-  user = await auth(UserRole.user)
+  manager = await auth(UserRole.manager)
 })
 
 test('create with invalid params or body', async () => {
@@ -36,7 +36,7 @@ test('admin create feature', async () => {
 test('user create feature', async () => {
   await request(app)
     .post('/features')
-    .set({ Authorization: 'Bearer ' + user.token })
+    .set({ Authorization: 'Bearer ' + manager.token })
     .send(feature)
     .expect(403)
   let res = await request(app).get('/features').expect(200)

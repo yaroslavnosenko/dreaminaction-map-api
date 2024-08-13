@@ -17,8 +17,12 @@ export class UserController {
 
   public static async createUser(req: Request, res: Response) {
     const { role, email } = req.body as UserRequest
+    const user = await UserService.getOneByEmail(email)
+    if (user) {
+      return res.status(409).send()
+    }
     const { id } = await UserService.create(email, role)
-    res.status(200).json({ id })
+    res.status(201).json({ id })
   }
 
   public static async setRole(req: Request, res: Response) {
