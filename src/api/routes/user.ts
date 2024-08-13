@@ -9,29 +9,28 @@ import {
   validateParams,
   validateQuery,
 } from '../middlewares'
-import { isMe } from './validations'
 
 const router = Router()
 
 router.get(
   '/',
   validateQuery(QueryQuery),
-  validateAuth([UserRole.admin, UserRole.manager]),
+  validateAuth([UserRole.admin]),
   UserController.getUsers
 )
 
 router.get(
   '/:id',
   validateParams(IdProp),
-  validateAuth([UserRole.admin, UserRole.manager], isMe),
+  validateAuth([UserRole.admin]),
   UserController.getUser
 )
 
-router.get(
-  '/:id/places',
+router.post(
+  '/',
   validateParams(IdProp),
-  validateAuth([UserRole.admin, UserRole.manager], isMe),
-  UserController.getUserPlaces
+  validateAuth([UserRole.admin]),
+  UserController.createUser
 )
 
 router.put(

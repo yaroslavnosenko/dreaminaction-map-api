@@ -6,7 +6,7 @@
     "build": "npx ncc build src/index.ts -o dist",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "test": "jest --runInBand --coverage"
+    "test": "NODE_ENV=test jest --runInBand --coverage"
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
-import { QueryQuery, UserRoleRequest } from '../dtos'
-import { PlaceService, UserService } from '../services'
+import { UserRequest, UserRoleRequest } from '../dtos'
+import { UserService } from '../services'
 
 export class UserController {
   public static async getUser(req: Request, res: Response) {
@@ -10,16 +10,15 @@ export class UserController {
     user ? res.status(200).json(user) : res.status(404).send()
   }
 
-  public static async getUsers(req: Request, res: Response) {
-    const query = req.query as QueryQuery
-    const users = await UserService.getAll(query)
+  public static async getUsers(_: Request, res: Response) {
+    const users = await UserService.getAll()
     res.status(200).json(users)
   }
 
-  public static async getUserPlaces(req: Request, res: Response) {
-    const { id } = req.params
-    const places = await PlaceService.getByOwner(id)
-    res.status(200).json(places)
+  public static async createUser(req: Request, res: Response) {
+    const { role, email } = req.body as UserRequest
+    const { id } = await UserService.create(email, role)
+    res.status(200).json({ id })
   }
 
   public static async setRole(req: Request, res: Response) {

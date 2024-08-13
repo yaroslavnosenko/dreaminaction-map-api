@@ -1,7 +1,6 @@
 import { UserRole } from '../../consts'
-import { ILike, User } from '../../database'
-import { QueryQuery } from '../dtos'
-import { UserRepsonse } from '../dtos/responses'
+import { User } from '../../database'
+import { UserRepsonse } from '../dtos'
 
 export class UserService {
   public static async create(email: string, role: UserRole): Promise<User> {
@@ -18,13 +17,8 @@ export class UserService {
     return await User.findOneBy({ email })
   }
 
-  public static async getAll(request: QueryQuery): Promise<UserRepsonse[]> {
-    return request.query
-      ? await User.find({
-          where: [{ email: ILike(request.query) }],
-          take: 30,
-        })
-      : await User.find({ take: 30 })
+  public static async getAll(): Promise<UserRepsonse[]> {
+    return await User.find()
   }
 
   public static async setRole(id: string, role: UserRole): Promise<boolean> {

@@ -33,6 +33,16 @@ export class ValidateOtpRequest {
   otp: string
 }
 
+export class UserRequest {
+  @IsEmail()
+  @Expose()
+  email: string
+
+  @IsEnum(UserRole)
+  @Expose()
+  role: UserRole
+}
+
 export class UserRoleRequest {
   @IsEnum(UserRole)
   @Expose()
@@ -57,6 +67,10 @@ export class PlaceRequest {
   @Expose()
   category: Category
 
+  @IsEnum(Accessibility)
+  @Expose()
+  accessibility: Accessibility
+
   @IsString()
   @MaxLength(120)
   @Expose()
@@ -75,12 +89,6 @@ export class PlaceRequest {
   @IsOptional()
   @Expose()
   description?: string
-}
-
-export class AccessibilityRequest {
-  @IsEnum(Accessibility)
-  @Expose()
-  accessibility: Accessibility
 }
 
 // Places - Features

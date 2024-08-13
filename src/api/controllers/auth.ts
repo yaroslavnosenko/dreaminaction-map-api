@@ -5,8 +5,23 @@ import { SendOtpRequest, ValidateOtpRequest } from '../dtos'
 import { AuthService, UserService } from '../services'
 
 export class AuthController {
+  public static async me(req: Request, res: Response) {
+    if (!req.user) {
+      return res.status(403).send()
+    }
+    return res.status(200).json(req.user)
+  }
+
   public static async sendOtp(req: Request, res: Response) {
     const { email } = req.body as SendOtpRequest
+
+    if (email !== appConfigs.adminEmail) {
+      const user = await UserService.getOneByEmail(email)
+      if (!user) {
+        return res.status(400).send()
+      }
+    }
+
     const isSent = await AuthService.sendOtp(email)
     return isSent ? res.status(200).send() : res.status(400).send()
   }
@@ -22,7 +37,7 @@ export class AuthController {
       const isAdmin = appConfigs.adminEmail === email
       user = await UserService.create(
         email,
-        isAdmin ? UserRole.admin : UserRole.user
+        isAdmin ? UserRole.admin : UserRole.manager
       )
     }
     res.status(200).json(AuthService.createToken(user.id))

@@ -1,7 +1,6 @@
-import { Column, Entity, OneToMany } from 'typeorm'
+import { Column, Entity } from 'typeorm'
 import { UserRole } from '../../consts'
 import { Base } from './base'
-import { Place } from './place'
 
 @Entity()
 export class User extends Base {
@@ -10,7 +9,4 @@ export class User extends Base {
 
   @Column('varchar')
   role: UserRole
-
-  @OneToMany(() => Place, (place) => place.user)
-  places: Place[]
 }

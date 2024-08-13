@@ -1,11 +1,5 @@
-import { Expose, Type } from 'class-transformer'
-import {
-  IsArray,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { Expose } from 'class-transformer'
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator'
 import { Accessibility, Category } from '../../consts'
 
 export class QueryQuery {
@@ -27,23 +21,4 @@ export class FiltersQuery extends QueryQuery {
   @IsOptional()
   @Expose()
   accessibilities?: Accessibility[]
-}
-
-export class BoundsQuery extends FiltersQuery {
-  @IsNumber()
-  @Expose()
-  @Type(() => Number)
-  neLat: number
-  @IsNumber()
-  @Expose()
-  @Type(() => Number)
-  neLng: number
-  @IsNumber()
-  @Expose()
-  @Type(() => Number)
-  swLat: number
-  @IsNumber()
-  @Expose()
-  @Type(() => Number)
-  swLng: number
 }

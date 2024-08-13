@@ -1,31 +1,23 @@
 import { plainToInstance } from 'class-transformer'
 import { In } from 'typeorm'
-import { Accessibility } from '../../consts'
-import { Feature, ILike, Place, PlaceFeature, User } from '../../database'
+import { Feature, ILike, Place, PlaceFeature } from '../../database'
 import {
-  BoundsQuery,
   FeaturesRequest,
   FiltersQuery,
+  IdResponse,
   PlaceRequest,
+  PlaceResponse,
 } from '../dtos'
-import { IdResponse, PlaceResponse } from '../dtos/responses'
 
 export class PlaceService {
-  public static async getOne(
-    id: string,
-    withOwner?: boolean
-  ): Promise<PlaceResponse | null> {
+  public static async getOne(id: string): Promise<PlaceResponse | null> {
     const query = await Place.findOne({
       where: { id },
       relations: { placeFeature: { feature: true } },
     })
     if (!query) return null
-    const { placeFeature, userId, ...data } = query
+    const { placeFeature, ...data } = query
     let result: PlaceResponse = { ...data }
-    if (withOwner) {
-      const user = await User.findOneBy({ id: userId })
-      result.owner = user!
-    }
     result.availableFeatures = []
     result.unavailableFeatures = []
     for (const featureMap of placeFeature) {
@@ -43,35 +35,11 @@ export class PlaceService {
 
   public static async getAll(request: FiltersQuery): Promise<PlaceResponse[]> {
     const where = this.buildQuery(request)
-    return await Place.find({ where, take: 50 })
+    return await Place.find({ where })
   }
 
-  public static async getByBounds(
-    request: BoundsQuery
-  ): Promise<PlaceResponse[]> {
-    const { swLat, swLng, neLat, neLng, accessibilities, ...other } = request
-    // TODO bounds
-    const filteredAccessibilities = accessibilities
-      ? accessibilities.filter((item) => item !== Accessibility.unknown)
-      : undefined
-    const where = this.buildQuery({
-      ...other,
-      accessibilities: filteredAccessibilities,
-    })
-    return Place.find({ take: 50, where })
-  }
-
-  public static async getByOwner(userId: string): Promise<PlaceResponse[]> {
-    return Place.findBy({ userId })
-  }
-
-  public static async create(
-    userId: string,
-    place: PlaceRequest
-  ): Promise<IdResponse> {
+  public static async create(place: PlaceRequest): Promise<IdResponse> {
     const { id } = await Place.create({
-      userId,
-      accessibility: Accessibility.unknown,
       ...place,
     }).save()
     return { id }
@@ -85,33 +53,6 @@ export class PlaceService {
     if (!dbPlace) return false
     const updated = Place.create({ ...dbPlace, ...place })
     await updated.save()
-    return true
-  }
-
-  public static async delete(id: string): Promise<void> {
-    await Place.delete(id)
-  }
-
-  public static async setOwner(id: string, userId: string): Promise<boolean> {
-    try {
-      const place = await Place.findOneBy({ id })
-      if (!place) return false
-      place.userId = userId
-      await place.save()
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  public static async setAccessibility(
-    id: string,
-    accessibility: Accessibility
-  ): Promise<boolean> {
-    const place = await Place.findOneBy({ id })
-    if (!place) return false
-    place.accessibility = accessibility
-    await place.save()
     return true
   }
 
@@ -145,6 +86,10 @@ export class PlaceService {
       )
     )
     return true
+  }
+
+  public static async delete(id: string): Promise<void> {
+    await Place.delete(id)
   }
 
   private static buildQuery(filters: FiltersQuery) {

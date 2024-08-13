@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   private static async sendEmail(email: string, otp: string): Promise<boolean> {
-    if (!appConfigs.smtp.host) {
+    if (process.env.NODE_ENV === 'test') {
       return true
     }
     try {
@@ -75,7 +75,7 @@ export class AuthService {
   }
 
   private static generateOTP(): string {
-    if (!appConfigs.smtp.host) {
+    if (process.env.NODE_ENV === 'test') {
       return '000000'
     }
     const otp = Math.floor(100000 + Math.random() * 900000)

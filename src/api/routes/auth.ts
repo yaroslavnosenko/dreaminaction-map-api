@@ -1,10 +1,17 @@
 import { Router } from 'express'
 
+import { UserRole } from '../../consts'
 import { AuthController } from '../controllers'
 import { SendOtpRequest, ValidateOtpRequest } from '../dtos'
-import { validateBody } from '../middlewares'
+import { validateAuth, validateBody } from '../middlewares'
 
 const router = Router()
+
+router.post(
+  '/me',
+  validateAuth([UserRole.admin, UserRole.manager]),
+  AuthController.me
+)
 
 router.post('/otp', validateBody(SendOtpRequest), AuthController.sendOtp)
 
