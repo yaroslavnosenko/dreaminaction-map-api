@@ -4,7 +4,7 @@ import { FeatureResponse, IdResponse } from '../dtos/responses'
 
 export class FeatureService {
   public static async getAll(): Promise<FeatureResponse[]> {
-    return await Feature.find()
+    return await Feature.find({ order: { createdAt: 'DESC' } })
   }
 
   public static async create(feature: FeatureRequest): Promise<IdResponse> {

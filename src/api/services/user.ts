@@ -18,7 +18,7 @@ export class UserService {
   }
 
   public static async getAll(): Promise<UserRepsonse[]> {
-    return await User.find()
+    return await User.find({ order: { updatedAt: 'DESC' } })
   }
 
   public static async setRole(id: string, role: UserRole): Promise<boolean> {

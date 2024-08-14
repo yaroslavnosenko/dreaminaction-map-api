@@ -7,5 +7,6 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+  await connection.dropDatabase()
   await connection.destroy()
 })

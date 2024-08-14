@@ -35,7 +35,7 @@ export class PlaceService {
 
   public static async getAll(request: FiltersQuery): Promise<PlaceResponse[]> {
     const where = this.buildQuery(request)
-    return await Place.find({ where })
+    return await Place.find({ where, order: { createdAt: 'DESC' } })
   }
 
   public static async create(place: PlaceRequest): Promise<IdResponse> {
